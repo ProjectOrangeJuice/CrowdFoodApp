@@ -78,7 +78,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         tools = new DisplayFuncs(p, this);
 
-setup();
+        setup();
 
         //Enable edit button
         FloatingActionButton btn = (FloatingActionButton) findViewById(R.id.editButton);
@@ -91,7 +91,7 @@ setup();
 
     }
 
-    private void setup(){
+    private void setup() {
         setupProductName();
         setupIngredients();
         setupNutrition();
@@ -102,13 +102,17 @@ setup();
 
     private void setupCaptureButtons() {
         ImageButton btn = (ImageButton) findViewById(R.id.captureIng);
-        Context c = this;
+
+        if (editMode) {
+            btn.setVisibility(View.VISIBLE);
+        } else {
+            btn.setVisibility(View.GONE);
+        }
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-openCrop();
-
+                openCrop();
             }
 
         });
@@ -116,7 +120,7 @@ openCrop();
 
     }
 
-    private void openCrop(){
+    private void openCrop() {
 
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
@@ -125,10 +129,10 @@ openCrop();
 
     }
 
-    private void getText(Bitmap img){
+    private void getText(Bitmap img) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         img.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
         String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
         IngText in = new IngText();
         in.setIngredients(encoded);
@@ -139,7 +143,7 @@ openCrop();
             public void onResponse(Call<IngText> call, Response<IngText> response) {
                 if (response.isSuccessful()) {
                     Log.i("reader", response.body().getIngredients());
-                    if(!response.body().getIngredients().equals("")){
+                    if (!response.body().getIngredients().equals("")) {
                         p.getIngredients().setIngredients(response.body().getIngredients().split(","));
                         setup();
                     }
@@ -174,8 +178,8 @@ openCrop();
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Toast.makeText(this,"Oops, an error. "+error,Toast.LENGTH_LONG);
-                Log.e("Error crop",error.getMessage());
+                Toast.makeText(this, "Oops, an error. " + error, Toast.LENGTH_LONG);
+                Log.e("Error crop", error.getMessage());
             }
         }
     }
