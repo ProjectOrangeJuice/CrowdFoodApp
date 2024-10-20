@@ -22,6 +22,12 @@
                 android:onClick="goBack"
                 android:text="Back" />
 
+            <Button
+                android:id="@+id/editButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Edit" />
+
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"

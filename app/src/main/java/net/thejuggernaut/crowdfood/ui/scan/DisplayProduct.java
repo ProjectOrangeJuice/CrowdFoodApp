@@ -18,11 +18,13 @@ import net.thejuggernaut.crowdfood.api.Product;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class DisplayProduct extends AppCompatActivity {
     private Product p;
-
+    private boolean editMode = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,40 +37,81 @@ public class DisplayProduct extends AppCompatActivity {
         setupProductName();
         setupIngredients();
         setupNutrition();
+
+        //Enable edit button
+        Button btn = (Button) findViewById(R.id.editButton);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editMode(v);
+            }
+        });
+
     }
 
 
-    private void setupProductName(){
+    private void editMode(View v){
+        editMode = !editMode;
+        setupProductName();
+        setupIngredients();
+        setupNutrition();
+    }
+
+    private void setupProductName() {
         TextView pn = (TextView) findViewById(R.id.productName);
-        pn.setText(p.getProductName().getName());
+        EditText pne = (EditText) findViewById(R.id.productNameEdit);
+        if (!editMode) {
+            pn.setVisibility(View.VISIBLE);
+            pne.setVisibility(View.GONE);
+            pn.setText(p.getProductName().getName());
+            if (p.getProductName().getUp() < 5) {
 
-        if(p.getProductName().getUp() < 5){
-            ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
-            Button up = (Button) findViewById(R.id.productNameUp);
-            up.setText("Up: "+p.getProductName().getUp());
-            Button down = (Button) findViewById(R.id.productNameDown);
-            down.setText("Down: "+p.getProductName().getDown());
+                ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
+                Button up = (Button) findViewById(R.id.productNameUp);
+                up.setText("Up: " + p.getProductName().getUp());
+                Button down = (Button) findViewById(R.id.productNameDown);
+                down.setText("Down: " + p.getProductName().getDown());
+            }
+
+        }else{
+           pn.setVisibility(View.GONE);
+           pne.setVisibility(View.VISIBLE);
+            ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.GONE);
+           pne.setText(p.getProductName().getName());
         }
 
     }
 
-    private void setupIngredients(){
+    private void setupIngredients() {
         TextView pn = (TextView) findViewById(R.id.ingredients);
+        EditText pne = (EditText) findViewById(R.id.ingredientsEdit);
 
-        pn.setText( TextUtils.join(",",p.getIngredients().getIngredients()));
-
-        if(p.getIngredients().getUp() < 5){
-            ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
-            Button up = (Button) findViewById(R.id.ingredientsUp);
-            up.setText("Up: "+p.getIngredients().getUp());
-            Button down = (Button) findViewById(R.id.ingredientsDown);
-            down.setText("Down: "+p.getIngredients().getDown());
+        pn.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
+        pne.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
+        if(!editMode) {
+            pn.setVisibility(View.VISIBLE);
+            pne.setVisibility(View.GONE);
+            if (p.getIngredients().getUp() < 5) {
+                ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
+                Button up = (Button) findViewById(R.id.ingredientsUp);
+                up.setText("Up: " + p.getIngredients().getUp());
+                Button down = (Button) findViewById(R.id.ingredientsDown);
+                down.setText("Down: " + p.getIngredients().getDown());
+            }
+        }else{
+            ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
+            pn.setVisibility(View.GONE);
+            pne.setVisibility(View.VISIBLE);
         }
-
     }
 
-    private void setupNutrition(){
+    private void setupNutrition() {
+
+        ArrayList<EditText> items = new ArrayList<>();
+        ArrayList<EditText> values = new ArrayList<>();
+
         TableLayout tbl = (TableLayout) findViewById(R.id.nutritionTable);
+        tbl.removeAllViews();
         //headings
         TableRow r = new TableRow(this);
         TextView nutName = new TextView(this);
@@ -82,14 +125,26 @@ public class DisplayProduct extends AppCompatActivity {
         val2.setText(p.getServing().getServing());
         r.addView(val2);
         tbl.addView(r);
-        for(Map.Entry<String, Float> entry: p.getNutrition().getNutrition().entrySet()){
+        for (Map.Entry<String, Float> entry : p.getNutrition().getNutrition().entrySet()) {
             TableRow curRow = new TableRow(this);
-            TextView ent = new TextView(this);
-            ent.setText(entry.getKey());
-            curRow.addView(ent);
+            if(!editMode) {
+                TextView ent = new TextView(this);
+                ent.setText(entry.getKey());
+                curRow.addView(ent);
+            }else{
+                EditText ent = new EditText(this);
+                ent.setText(entry.getKey());
+                curRow.addView(ent);
+                items.add(ent);
+            }
+
+
 
             EditText val = new EditText(this);
-            val.setEnabled(false);
+            if(!editMode) {
+                val.setEnabled(false);
+            }
+            values.add(val);
             val.setText(String.valueOf(entry.getValue()));
             curRow.addView(val);
 
@@ -97,15 +152,26 @@ public class DisplayProduct extends AppCompatActivity {
 
         }
 
+        //Add our empty row
+        if(editMode){
+            TableRow curRow = new TableRow(this);
+            EditText ent = new EditText(this);
+            curRow.addView(ent);
+            items.add(ent);
+            EditText val = new EditText(this);
+            values.add(val);
+            curRow.addView(val);
+            tbl.addView(curRow);
+        }
 
-
-
-        if(p.getNutrition().getUp() < 5){
-            ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.VISIBLE);
-            Button up = (Button) findViewById(R.id.nutritionUp);
-            up.setText("Up: "+p.getIngredients().getUp());
-            Button down = (Button) findViewById(R.id.nutritionDown);
-            down.setText("Down: "+p.getIngredients().getDown());
+        if(!editMode) {
+            if (p.getNutrition().getUp() < 5) {
+                ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.VISIBLE);
+                Button up = (Button) findViewById(R.id.nutritionUp);
+                up.setText("Up: " + p.getIngredients().getUp());
+                Button down = (Button) findViewById(R.id.nutritionDown);
+                down.setText("Down: " + p.getIngredients().getDown());
+            }
         }
 
     }
