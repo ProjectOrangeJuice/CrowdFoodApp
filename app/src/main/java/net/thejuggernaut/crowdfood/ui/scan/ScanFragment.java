@@ -8,6 +8,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import net.thejuggernaut.crowdfood.MainActivity;
 import net.thejuggernaut.crowdfood.R;
@@ -65,6 +70,7 @@ public class ScanFragment extends Fragment {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                readBarcode(bitmap);
                 //Intent intent = new Intent(this,Cam.class);
                 //startActivity(intent);
             }
@@ -75,7 +81,7 @@ public class ScanFragment extends Fragment {
         Button scanButton = (Button) view.findViewById(R.id.scanButton);
         scanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                scanItem(v);
+                mCamera.takePicture(null, null, mPicture);//scanItem(v);
             }
         });
 
@@ -94,6 +100,20 @@ public class ScanFragment extends Fragment {
 
 
 
+    private void readBarcode(Bitmap bit){
+        BarcodeDetector detector =
+                new BarcodeDetector.Builder(getContext())
+                        .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+                        .build();
+        if(!detector.isOperational()){
+           Log.e("BARCODE","Couldn't setup");
+            return;
+        }
+        Frame frame = new Frame.Builder().setBitmap(bit).build();
+        SparseArray<Barcode> barcodes = detector.detect(frame);
+        Barcode thisCode = barcodes.valueAt(0);
+        Log.i("BARCODE","Value is "+thisCode.rawValue);
+    }
 
 
 
