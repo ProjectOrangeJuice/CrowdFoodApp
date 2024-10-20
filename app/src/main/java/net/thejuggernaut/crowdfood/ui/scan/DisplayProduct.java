@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
@@ -54,7 +56,7 @@ public class DisplayProduct extends AppCompatActivity {
         setupNutrition();
 
         //Enable edit button
-        Button btn = (Button) findViewById(R.id.editButton);
+        FloatingActionButton btn = (FloatingActionButton) findViewById(R.id.editButton);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
