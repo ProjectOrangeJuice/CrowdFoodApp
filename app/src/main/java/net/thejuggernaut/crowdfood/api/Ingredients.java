@@ -6,15 +6,14 @@ import java.util.Map;
 public class Ingredients implements Serializable {
 
     String[] ingredients;
-    int up;
-    int down;
+    Trust votes;
     int stamp;
     Nutrition[] changes;
 
 
 
-    public int getUp() {
-        return up;
+    public Trust getVotes() {
+        return votes;
     }
 
     public String[] getIngredients() {
@@ -25,17 +24,7 @@ public class Ingredients implements Serializable {
         this.ingredients = ingredients;
     }
 
-    public void setUp(int up) {
-        this.up = up;
-    }
 
-    public int getDown() {
-        return down;
-    }
-
-    public void setDown(int down) {
-        this.down = down;
-    }
 
     public int getStamp() {
         return stamp;

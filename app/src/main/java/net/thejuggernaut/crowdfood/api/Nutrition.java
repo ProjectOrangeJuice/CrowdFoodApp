@@ -5,12 +5,15 @@ import java.util.Map;
 
 public class Nutrition implements Serializable {
     Map<String,float[]> nutrition;
-    int up;
-    int down;
+    Trust votes;
     int stamp;
     String weight;
     String recommended;
     Nutrition[] changes;
+
+    public Trust getVotes() {
+        return votes;
+    }
 
     public Map<String, float[]> getNutrition() {
         return nutrition;
@@ -20,21 +23,6 @@ public class Nutrition implements Serializable {
         this.nutrition = nutrition;
     }
 
-    public int getUp() {
-        return up;
-    }
-
-    public void setUp(int up) {
-        this.up = up;
-    }
-
-    public int getDown() {
-        return down;
-    }
-
-    public void setDown(int down) {
-        this.down = down;
-    }
 
     public int getStamp() {
         return stamp;

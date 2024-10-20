@@ -5,8 +5,7 @@ import java.util.Map;
 
 public class Name implements Serializable {
     String name;
-    int up;
-    int down;
+    Trust votes;
     int stamp;
     Nutrition[] changes;
 
@@ -17,22 +16,10 @@ public class Name implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public int getUp() {
-        return up;
+    public Trust getVotes() {
+        return votes;
     }
 
-    public void setUp(int up) {
-        this.up = up;
-    }
-
-    public int getDown() {
-        return down;
-    }
-
-    public void setDown(int down) {
-        this.down = down;
-    }
 
     public int getStamp() {
         return stamp;
