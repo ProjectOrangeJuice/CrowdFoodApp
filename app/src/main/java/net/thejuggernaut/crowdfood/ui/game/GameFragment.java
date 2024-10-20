@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,6 +41,16 @@ public class GameFragment extends Fragment {
 
         setupHistory();
         return root;
+    }
+
+
+    private void setupButtons(){
+        ((Button) v.findViewById(R.id.gameButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGame();
+            }
+        });
     }
 
 private  void setupHistory(){
