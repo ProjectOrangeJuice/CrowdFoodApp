@@ -23,13 +23,10 @@ public class GameFragment extends Fragment {
         gameViewModel =
                 ViewModelProviders.of(this).get(GameViewModel.class);
         View root = inflater.inflate(R.layout.fragment_game, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
-        gameViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
         return root;
     }
+
+
+
 }

@@ -9,8 +9,7 @@ public class GameViewModel extends ViewModel {
     private MutableLiveData<String> mText;
 
     public GameViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+
     }
 
     public LiveData<String> getText() {
