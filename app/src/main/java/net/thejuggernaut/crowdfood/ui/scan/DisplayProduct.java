@@ -458,12 +458,13 @@ public class DisplayProduct extends AppCompatActivity {
 
         if (changed) {
             FoodieAPI foodieAPI = SetupRetro.getRetro(this);
-            Call<Void> call = foodieAPI.updateProduct(p,p.getID());
-            call.enqueue(new Callback<Void>() {
+            Call<Product> call = foodieAPI.updateProduct(p,p.getID());
+            call.enqueue(new Callback<Product>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(Call<Product> call, Response<Product> response) {
                     if (response.isSuccessful()) {
                         Log.i("UPDATE", "WORKED");
+                        p = response.body();
                     } else {
                         //not found
                         Log.i("UPDATE", response.message());
@@ -472,7 +473,7 @@ public class DisplayProduct extends AppCompatActivity {
 
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(Call<Product> call, Throwable t) {
                     t.printStackTrace();
                 }
 
