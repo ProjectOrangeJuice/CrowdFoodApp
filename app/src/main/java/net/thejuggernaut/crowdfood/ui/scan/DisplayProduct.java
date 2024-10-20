@@ -171,7 +171,7 @@ public class DisplayProduct extends AppCompatActivity {
         }else{
             EditText val1 = new EditText(this);
             val1.setText(p.getNutrition().getWeight());
-            val1.setHint("100g");
+            val1.setHint("100");
             r.addView(val1);
 
 
@@ -181,7 +181,7 @@ public class DisplayProduct extends AppCompatActivity {
 
 
             EditText val2 = new EditText(this);
-            val2.setHint("10g");
+            val2.setHint("10");
             val2.setText(p.getNutrition().getRecommended());
             r.addView(val2);
             recommended = val2;
@@ -196,20 +196,21 @@ public class DisplayProduct extends AppCompatActivity {
         }
         for (Map.Entry<String, float[]> entry : p.getNutrition().getNutrition().entrySet()) {
             TableRow curRow = new TableRow(this);
+            EditText ent2 = new EditText(this);
             if(!editMode) {
                 TextView ent = new TextView(this);
                 ent.setText(entry.getKey());
                 curRow.addView(ent);
             }else{
-                EditText ent = new EditText(this);
-                ent.setText(entry.getKey());
-                curRow.addView(ent);
-                items.add(ent);
+                ent2.setText(entry.getKey());
+                curRow.addView(ent2);
+                items.add(ent2);
             }
 
 
 
             EditText val = new EditText(this);
+
 
             if(!editMode) {
                 val.setEnabled(false);
@@ -222,6 +223,10 @@ public class DisplayProduct extends AppCompatActivity {
 
 
             curRow.addView(val);
+
+            TableTextWatch tbc = new TableTextWatch(items,values,curRow,ent2,val,this,tbl);
+            val.addTextChangedListener(tbc);
+            ent2.addTextChangedListener(tbc);
 
 
             tbl.addView(curRow);
@@ -237,9 +242,12 @@ public class DisplayProduct extends AppCompatActivity {
             EditText val = new EditText(this);
             values.add(val);
             ent.setHint("Fat");
-            val.setHint("100g");
+            val.setHint("100");
             curRow.addView(val);
             tbl.addView(curRow);
+            TableTextWatch tbc = new TableTextWatch(items,values,curRow,ent,val,this,tbl);
+            val.addTextChangedListener(tbc);
+            ent.addTextChangedListener(tbc);
         }
 
         if(!editMode) {
@@ -258,6 +266,12 @@ public class DisplayProduct extends AppCompatActivity {
     }
 
     private boolean checkTable(Map<String,float[]> newmap){
+        System.out.println("Size.. "+newmap.size());
+        if(newmap.size() != p.getNutrition().getNutrition().size()){
+            System.out.println("Diff size for table");
+            return true;
+        }
+
         for (Map.Entry<String, float[]> entry : p.getNutrition().getNutrition().entrySet()) {
             if (!newmap.containsKey(entry.getKey())) {
                 System.out.println("I can't find a value so returning true");
@@ -275,7 +289,7 @@ public class DisplayProduct extends AppCompatActivity {
                 System.out.println("I can't find a float so returning true");
                 return true;
             }
-            newmap.remove(entry.getKey());
+            p.getNutrition().getNutrition().remove(entry.getKey());
 
         }
 return false;
@@ -337,10 +351,11 @@ return false;
                             0};
 
                     n.put(items.get(i).getText().toString(), floatvals);
+                    System.out.println("Put! "+n.size());
                 }
             }
 
-
+            System.out.println("CHecking.. "+n.size());
             if(!p.getNutrition().getRecommended().equals(recommended.getText().toString()) ||
         !p.getNutrition().getWeight().equals(weight.getText().toString())||
                 checkTable(n) ){
