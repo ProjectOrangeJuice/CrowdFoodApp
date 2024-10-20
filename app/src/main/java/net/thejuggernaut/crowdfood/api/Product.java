@@ -8,6 +8,10 @@ public class Product implements Serializable {
     String productName;
     String[] ingredients;
     Map<String,Float> nutrition;
+    String serving;
+
+
+
     int version;
     Map<String, Point> trust;
     String changed;
@@ -26,7 +30,9 @@ public class Product implements Serializable {
 //        this.changes = changes;
 //        this.error = error;
 //    }
-
+public String getServing() {
+    return serving;
+}
     public String getID() {
         return ID;
     }
