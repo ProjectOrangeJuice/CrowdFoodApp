@@ -2,11 +2,13 @@ package net.thejuggernaut.crowdfood.ui.scan;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,34 +19,62 @@ import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
 
+import me.dm7.barcodescanner.zbar.Result;
+import me.dm7.barcodescanner.zbar.ZBarScannerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ScanFragment extends Fragment {
+public class ScanFragment extends Fragment  implements ZBarScannerView.ResultHandler {
 
     private ScanViewModel scanViewModel;
+    private ZBarScannerView mScannerView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        scanViewModel =
-                ViewModelProviders.of(this).get(ScanViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_scan, container, false);
-        buttonActions(root);
+//        scanViewModel =
+//                ViewModelProviders.of(this).get(ScanViewModel.class);
+//        View root = inflater.inflate(R.layout.fragment_scan, container, false);
+//
+//        buttonActions(root);
+//
+//
+//        return root;
 
-
-        return root;
+        mScannerView = new ZBarScannerView(getActivity());
+        return mScannerView;
     }
 
-    public void buttonActions(View view) {
-        Button scanButton = (Button) view.findViewById(R.id.scanButton);
-        scanButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-               scanItem(v);
-            }
-        });
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mScannerView.setResultHandler(this);
+        mScannerView.startCamera();
+    }
+
+    @Override
+    public void handleResult(Result rawResult) {
+        Toast.makeText(getActivity(), "Contents = " + rawResult.getContents() +
+                ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
+        // Note:
+        // * Wait 2 seconds to resume the preview.
+        // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
+        // * I don't know why this is the case but I don't have the time to figure out.
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mScannerView.resumeCameraPreview(ScanFragment.this);
+            }
+        }, 2000);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mScannerView.stopCamera();
     }
 
 
