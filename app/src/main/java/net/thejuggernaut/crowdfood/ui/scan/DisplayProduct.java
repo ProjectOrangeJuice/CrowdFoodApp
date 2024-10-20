@@ -85,13 +85,14 @@ public class DisplayProduct extends AppCompatActivity {
             pne.setVisibility(View.GONE);
             pn.setText(p.getProductName().getName());
             if (p.getProductName().isVoteable()) {
-//                int[] vo = {1,0,0};
-//                tools.voteButtons(((ImageButton) findViewById(R.id.productNameUp)),
-//                        ((ImageButton) findViewById(R.id.productNameDown)), vo);
+                ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
+                int[] vo = {1,0,0};
+                tools.voteButtons(((ImageButton) findViewById(R.id.productNameUp)),
+                        ((ImageButton) findViewById(R.id.productNameDown)), vo);
+            }else{
+                ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.GONE);
             }
-            int[] vo = {1,0,0};
-            tools.voteButtons(((ImageButton) findViewById(R.id.productNameUp)),
-                    ((ImageButton) findViewById(R.id.productNameDown)), vo);
+
 
         }else{
            pn.setVisibility(View.GONE);
@@ -113,22 +114,11 @@ public class DisplayProduct extends AppCompatActivity {
             pne.setVisibility(View.GONE);
             if (p.getIngredients().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
-                Button up = (Button) findViewById(R.id.ingredientsUp);
-                up.setText("Up");
-                up.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        vote(0,1,0);
-                    }
-                });
-                Button down = (Button) findViewById(R.id.ingredientsDown);
-                down.setText("Down");
-                down.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        vote(0,-1,0);
-                    }
-                });
+                int[] vo = {0,1,0};
+                tools.voteButtons(((ImageButton) findViewById(R.id.ingredientsUp)),
+                        ((ImageButton) findViewById(R.id.ingredientsDown)), vo);
+            }else{
+                ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
             }
         }else{
             ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
@@ -219,22 +209,11 @@ public class DisplayProduct extends AppCompatActivity {
         if(!editMode) {
             if (p.getNutrition().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.VISIBLE);
-                Button up = (Button) findViewById(R.id.nutritionUp);
-                up.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        vote(0,0,1);
-                    }
-                });
-                up.setText("Up");
-                Button down = (Button) findViewById(R.id.nutritionDown);
-                down.setText("Down");
-                down.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        vote(1,0,-1);
-                    }
-                });
+                int[] vo = {0,0,1};
+                tools.voteButtons(((ImageButton) findViewById(R.id.nutritionUp)),
+                        ((ImageButton) findViewById(R.id.nutritionDown)), vo);
+            }else{
+                ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.GONE);
             }
         }else{
             ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.GONE);
@@ -298,29 +277,5 @@ public class DisplayProduct extends AppCompatActivity {
         }
     }
 
-
-    private void vote(int name, int ingre, int nut){
-        Vote v = new Vote(p.getID(),name,ingre,nut);
-
-        FoodieAPI foodieAPI = SetupRetro.getRetro();
-        Call<Void> call = foodieAPI.voteForProduct(v);
-        call.enqueue(new Callback<Void>() { @Override
-        public void onResponse(Call<Void> call, Response<Void> response) {
-            if(response.isSuccessful()) {
-                Log.i("UPDATE","WORKED");
-            } else {
-                //not found
-                Log.i("UPDATE",response.message());
-            }
-        }
-
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                t.printStackTrace();
-            }
-
-        });
-    }
 
 }
