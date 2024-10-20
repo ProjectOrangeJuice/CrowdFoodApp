@@ -3,9 +3,17 @@ package net.thejuggernaut.crowdfood.api;
 import java.io.Serializable;
 
 public class Vote  implements Serializable {
+    private String id;
     private int name;
     private int ingredients;
-    private int serving;
+    private int nutrition;
+
+    public Vote(String barcode, int name, int ing, int nut){
+        this.id = barcode;
+        this.name = name;
+        this.ingredients = ing;
+        this.nutrition = nut;
+    }
 
     public int getName() {
         return name;
@@ -13,6 +21,14 @@ public class Vote  implements Serializable {
 
     public void setName(int name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getIngredients() {
@@ -23,11 +39,11 @@ public class Vote  implements Serializable {
         this.ingredients = ingredients;
     }
 
-    public int getServing() {
-        return serving;
+    public int getNutrition() {
+        return nutrition;
     }
 
-    public void setServing(int serving) {
-        this.serving = serving;
+    public void setNutrition(int serving) {
+        this.nutrition = serving;
     }
 }

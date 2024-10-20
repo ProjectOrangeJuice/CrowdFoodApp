@@ -18,6 +18,7 @@ import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
+import net.thejuggernaut.crowdfood.api.Vote;
 
 import org.w3c.dom.Text;
 
@@ -82,8 +83,20 @@ public class DisplayProduct extends AppCompatActivity {
                 ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
                 Button up = (Button) findViewById(R.id.productNameUp);
                 up.setText("Up: " + p.getProductName().getUp());
+                up.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        vote(1,0,0);
+                    }
+                });
                 Button down = (Button) findViewById(R.id.productNameDown);
                 down.setText("Down: " + p.getProductName().getDown());
+                down.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        vote(-1,0,0);
+                    }
+                });
             }
 
         }else{
@@ -108,8 +121,20 @@ public class DisplayProduct extends AppCompatActivity {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
                 Button up = (Button) findViewById(R.id.ingredientsUp);
                 up.setText("Up: " + p.getIngredients().getUp());
+                up.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        vote(0,1,0);
+                    }
+                });
                 Button down = (Button) findViewById(R.id.ingredientsDown);
                 down.setText("Down: " + p.getIngredients().getDown());
+                down.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        vote(0,-1,0);
+                    }
+                });
             }
         }else{
             ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
@@ -201,9 +226,21 @@ public class DisplayProduct extends AppCompatActivity {
             if (p.getNutrition().getUp() < 5) {
                 ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.VISIBLE);
                 Button up = (Button) findViewById(R.id.nutritionUp);
+                up.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        vote(0,0,1);
+                    }
+                });
                 up.setText("Up: " + p.getIngredients().getUp());
                 Button down = (Button) findViewById(R.id.nutritionDown);
                 down.setText("Down: " + p.getIngredients().getDown());
+                down.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        vote(1,0,-1);
+                    }
+                });
             }
         }else{
             ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.GONE);
@@ -266,4 +303,30 @@ public class DisplayProduct extends AppCompatActivity {
             });
         }
     }
+
+
+    private void vote(int name, int ingre, int nut){
+        Vote v = new Vote(p.getID(),name,ingre,nut);
+
+        FoodieAPI foodieAPI = SetupRetro.getRetro();
+        Call<Void> call = foodieAPI.voteForProduct(v);
+        call.enqueue(new Callback<Void>() { @Override
+        public void onResponse(Call<Void> call, Response<Void> response) {
+            if(response.isSuccessful()) {
+                Log.i("UPDATE","WORKED");
+            } else {
+                //not found
+                Log.i("UPDATE",response.message());
+            }
+        }
+
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                t.printStackTrace();
+            }
+
+        });
+    }
+
 }
