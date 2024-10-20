@@ -7,9 +7,11 @@ import java.util.Map;
 
 public class Product implements Serializable {
     String ID;
-    Name productName;
-    Ingredients ingredients;
-    Nutrition nutrition;
+    Name productName = new Name();
+    Ingredients ingredients = new Ingredients();
+    Nutrition nutrition = new Nutrition();
+
+
 
 
 

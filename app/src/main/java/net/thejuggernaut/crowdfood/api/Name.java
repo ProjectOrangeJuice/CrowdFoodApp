@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class Name implements Serializable {
-    String name;
-    Trust votes;
-    int stamp;
-    boolean vote;
-    Nutrition[] changes;
+    String name = "";
+    Trust votes = new Trust();
+    int stamp = 0;
+    boolean vote = false;
+    Name[] changes =new Name[0];
 
     public String getName() {
         return name;
@@ -33,11 +33,9 @@ public class Name implements Serializable {
         this.stamp = stamp;
     }
 
-    public Nutrition[] getChanges() {
+    public Name[] getChanges() {
         return changes;
     }
 
-    public void setChanges(Nutrition[] changes) {
-        this.changes = changes;
-    }
+
 }

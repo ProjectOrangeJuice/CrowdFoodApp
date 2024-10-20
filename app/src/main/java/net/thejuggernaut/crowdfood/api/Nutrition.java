@@ -5,12 +5,12 @@ import java.util.Map;
 
 public class Nutrition implements Serializable {
     Map<String,float[]> nutrition;
-    Trust votes;
-    int stamp;
-    boolean vote;
-    String weight;
-    String recommended;
-    Nutrition[] changes;
+    Trust votes = new Trust();
+    int stamp = 0;
+    boolean vote = false;
+    String weight = "";
+    String recommended = "";
+    Nutrition[] changes = new Nutrition[0];
 
     public Trust getVotes() {
         return votes;

@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class Ingredients implements Serializable {
 
-    String[] ingredients;
-    Trust votes;
-    boolean vote;
-    int stamp;
-    Nutrition[] changes;
+    String[] ingredients = new String[0];
+    Trust votes = new Trust();
+    boolean vote = false;
+    int stamp = 0;
+    Ingredients[] changes = new Ingredients[0];
 
 
     public boolean isVoteable() {
@@ -38,11 +38,9 @@ public class Ingredients implements Serializable {
         this.stamp = stamp;
     }
 
-    public Nutrition[] getChanges() {
+    public Ingredients[] getChanges() {
         return changes;
     }
 
-    public void setChanges(Nutrition[] changes) {
-        this.changes = changes;
-    }
+
 }

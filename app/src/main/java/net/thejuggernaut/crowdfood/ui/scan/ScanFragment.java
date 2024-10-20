@@ -1,5 +1,7 @@
 package net.thejuggernaut.crowdfood.ui.scan;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -89,7 +91,33 @@ public class ScanFragment extends Fragment  implements ZBarScannerView.ResultHan
 
             } else {
                 //not found
-                Log.i("PRODUCT",response.message());
+                Log.i("PRODUCT21",response.message());
+
+                //Ask if they want to create it
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+
+                                Product p = new Product();//All empty
+                                p.setID(barcode);
+                                Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
+                                intent.putExtra("PRODUCT",p);
+                                startActivity(intent);
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Not found").setMessage("Create it?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
             }
         }
 
