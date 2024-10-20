@@ -35,6 +35,7 @@ import net.thejuggernaut.crowdfood.ui.CameraPreview;
 import net.thejuggernaut.crowdfood.ui.Scanned;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import retrofit2.Call;
@@ -63,6 +64,7 @@ public class ScanFragment extends Fragment {
         mCamera.setDisplayOrientation(90);
         mPicture = getPictureCallback();
         mPreview.refreshCamera(mCamera);
+
         return root;
     }
     private Camera.PictureCallback getPictureCallback() {
@@ -101,6 +103,15 @@ public class ScanFragment extends Fragment {
 
 
     private void readBarcode(Bitmap bit){
+        //get the image i copied
+        InputStream beep = null;
+        try {
+            beep = getContext().getAssets().open("qr.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bit = BitmapFactory.decodeStream(beep);
+        Log.i("BARCODE","size of image.. "+bit.getWidth());
         BarcodeDetector detector =
                 new BarcodeDetector.Builder(getContext())
                         .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
@@ -111,8 +122,12 @@ public class ScanFragment extends Fragment {
         }
         Frame frame = new Frame.Builder().setBitmap(bit).build();
         SparseArray<Barcode> barcodes = detector.detect(frame);
-        Barcode thisCode = barcodes.valueAt(0);
-        Log.i("BARCODE","Value is "+thisCode.rawValue);
+        try {
+            Barcode thisCode = barcodes.valueAt(0);
+            Log.i("BARCODE", "Value is " + thisCode.rawValue);
+        }catch (Exception e){
+            Log.e("BARCODE",e.getMessage());
+        }
     }
 
 
