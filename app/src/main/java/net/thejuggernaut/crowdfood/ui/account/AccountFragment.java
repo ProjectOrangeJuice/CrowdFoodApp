@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,6 +45,7 @@ public class AccountFragment extends Fragment {
 
     private AccountViewModel accountViewModel;
     private boolean editMode = false;
+    View v;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,10 +55,28 @@ public class AccountFragment extends Fragment {
 
         displayValues(root);
         getPoints(root);
+
+        //Enable edit button
+        FloatingActionButton btn = (FloatingActionButton) root.findViewById(R.id.accountEdit);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              editMode();
+            }
+        });
+
+
+        v = root;
         return root;
     }
 
-
+    private void editMode() {
+        if (editMode) {
+           save();
+        }
+        editMode = !editMode;
+        displayValues(v);
+    }
     private void getPoints(View v){
         AccountApi accountAPI = SetupRetro.getRetro();
         Call<Points> call = accountAPI.loadPoints();
@@ -184,6 +204,143 @@ public class AccountFragment extends Fragment {
 
 
     }
+
+
+
+
+    private boolean checkTable(Map<String, Float> newmap) {
+        //get from shared prefs
+        SharedPreferences pref= v.getContext().getSharedPreferences("AccountInfo",MODE_PRIVATE);
+        String storedHashMapString = pref.getString("Recommended", "");
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, Float>>(){}.getType();
+        Gson gson = new Gson();
+
+        HashMap<String, Float> map = gson.fromJson(storedHashMapString, type);
+
+
+        System.out.println("Size.. " + newmap.size());
+        if (newmap.size() != map.size()) {
+            System.out.println("Diff size for table");
+            return true;
+        }
+
+        for (Map.Entry<String, Float> entry :map.entrySet()) {
+            if (!newmap.containsKey(entry.getKey())) {
+                System.out.println("I can't find a value so returning true");
+                return true;
+            }
+            boolean found = false;
+            for (Map.Entry<String, Float> nentry : newmap.entrySet()) {
+                if (nentry.getKey() == entry.getKey() &&
+                        nentry.getValue() == entry.getValue()) {
+                    found = true;
+                }
+
+            }
+            if (!found) {
+                System.out.println("I can't find a float so returning true");
+                return true;
+            }
+            map.remove(entry.getKey());
+
+        }
+        return false;
+    }
+
+
+    private boolean checkIng(String[] ing) {
+        SharedPreferences pref= v.getContext().getSharedPreferences("AccountInfo",MODE_PRIVATE);
+        String[] old =  pref.getString("Allergies","").split(",");
+        if (old.length != ing.length) {
+            System.out.println("Ing diff size");
+            return true;
+        }
+        for (String i : ing) {
+            boolean found = false;
+            for (String x : old) {
+                if (x.equals(i)) {
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                System.out.println("Could not find " + i);
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    private void save() {
+
+        EditText inge = (EditText) v.findViewById(R.id.allergiesEdit);
+        Boolean changed = false;
+        SharedPreferences pref = v.getContext().getSharedPreferences("AccountInfo",MODE_PRIVATE);
+        pref.edit().putString("Allergies",inge.getText().toString()).apply();
+
+
+        Info info = new Info();
+        info.setAllergies(inge.getText().toString().split(","));
+
+        //Get the new map of values
+        Map<String, Float> n = new HashMap<>();
+        for (int i = 0; i < items.size() - 1; i++) {
+
+            if (items.get(i).getText().toString().equals("")
+                    && values.get(i).getText().toString().equals("")) {
+                System.out.println("Empty value");
+            } else {
+
+                n.put(items.get(i).getText().toString(), Float.parseFloat(values.get(i).getText().toString()));
+                System.out.println("Put! " + n.size());
+            }
+        }
+
+
+        info.setRecommendedNutrition(n);
+
+        //Convert the recommended back to json!
+        Gson gson = new Gson();
+        String mapString =gson.toJson (n);
+        System.out.println("The map looks like this --- "+mapString);
+
+        pref.edit().putString("Recommended",mapString).apply();
+
+        System.out.println("CHecking.. " + n.size());
+        if (checkTable(n)) {
+            changed = true; //need to check to see if nutritional info has changed
+
+        }
+
+
+        if (changed) {
+            AccountApi accountApi = SetupRetro.getRetro();
+            Call<Void> call = accountApi.updateAccount(info);
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Log.i("UPDATE", "WORKED");
+                    } else {
+                        //not found
+                        Log.i("UPDATE", response.message());
+                    }
+                }
+
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    t.printStackTrace();
+                }
+
+            });
+        }
+    }
+
+
+
+
 
 
 }
