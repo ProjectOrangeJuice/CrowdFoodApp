@@ -11,9 +11,9 @@ public interface FoodieAPI {
     @GET("product/{barcode}")
     Call<Product> loadProduct(@Path("barcode") String status);
 
-    @POST("product")
-    Call<Void> updateProduct(@Body Product product);
+    @POST("product/{barcode}")
+    Call<Void> updateProduct(@Body Product product,@Path("barcode") String status);
 
-    @POST("vote")
-    Call<Void> voteForProduct(@Body Vote vote);
+    @POST("vote/{barcode}")
+    Call<Void> voteForProduct(@Body Vote vote,@Path("barcode") String status);
 }

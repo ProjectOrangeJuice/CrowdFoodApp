@@ -69,7 +69,7 @@ public class DisplayFuncs {
         Vote v = new Vote(p.getID(),name,ingre,nut);
 
         FoodieAPI foodieAPI = SetupRetro.getRetro();
-        Call<Void> call = foodieAPI.voteForProduct(v);
+        Call<Void> call = foodieAPI.voteForProduct(v,p.getID());
         call.enqueue(new Callback<Void>() { @Override
         public void onResponse(Call<Void> call, Response<Void> response) {
             if(response.isSuccessful()) {

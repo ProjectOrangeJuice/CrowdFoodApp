@@ -1,7 +1,9 @@
 package net.thejuggernaut.crowdfood.ui.scan;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -59,6 +61,7 @@ public class DisplayProduct extends AppCompatActivity {
         setupProductName();
         setupIngredients();
         setupNutrition();
+        setupAlert();
 
         //Enable edit button
         FloatingActionButton btn = (FloatingActionButton) findViewById(R.id.editButton);
@@ -110,6 +113,38 @@ public class DisplayProduct extends AppCompatActivity {
         }
 
     }
+
+    private void setupAlert(){
+        SharedPreferences pref= getSharedPreferences("AccountInfo",MODE_PRIVATE);
+        String allergies = pref.getString("Allergies","");
+        String[] allergiesList = allergies.split(",");
+        ArrayList<String> alerts = new ArrayList<>();
+
+        for(String val : p.getIngredients().getIngredients()){
+            for(String al : allergiesList){
+                if(val.toLowerCase().equals(al.toLowerCase())){
+                    alerts.add("Product contains "+al);
+                }
+            }
+        }
+
+        if(alerts.size() > 0){
+            ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.VISIBLE);
+        }else{
+            ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.GONE);
+        }
+
+        String html = "<h1>Warning</h1>";
+        for(String alert : alerts){
+            html += "&#8226; "+alert+" <br>";
+        }
+
+        ((TextView) findViewById(R.id.alertText)).setText(Html.fromHtml(html));
+
+
+
+    }
+
 
     private void setupIngredients() {
         TextView pn = (TextView) findViewById(R.id.ingredients);
@@ -377,7 +412,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         if (changed) {
             FoodieAPI foodieAPI = SetupRetro.getRetro();
-            Call<Void> call = foodieAPI.updateProduct(p);
+            Call<Void> call = foodieAPI.updateProduct(p,p.getID());
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
