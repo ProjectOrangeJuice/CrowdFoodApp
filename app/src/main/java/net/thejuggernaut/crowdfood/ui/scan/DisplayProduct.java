@@ -78,6 +78,7 @@ public class DisplayProduct extends AppCompatActivity {
     }
 
     private void setupProductName() {
+
         TextView pn = (TextView) findViewById(R.id.productName);
         EditText pne = (EditText) findViewById(R.id.productNameEdit);
         if (!editMode) {
@@ -106,9 +107,13 @@ public class DisplayProduct extends AppCompatActivity {
     private void setupIngredients() {
         TextView pn = (TextView) findViewById(R.id.ingredients);
         EditText pne = (EditText) findViewById(R.id.ingredientsEdit);
-
-        pn.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
-        pne.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
+        if(p.getIngredients().getIngredients() != null) {
+            pn.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
+            pne.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
+        }else {
+            pn.setText("");
+            pne.setText("");
+        }
         if(!editMode) {
             pn.setVisibility(View.VISIBLE);
             pne.setVisibility(View.GONE);
@@ -162,6 +167,10 @@ public class DisplayProduct extends AppCompatActivity {
 
 
         tbl.addView(r);
+        if(p.getNutrition().getNutrition() == null){
+            Map<String,float[]> m = new HashMap<>();
+            p.getNutrition().setNutrition(m);
+        }
         for (Map.Entry<String, float[]> entry : p.getNutrition().getNutrition().entrySet()) {
             TableRow curRow = new TableRow(this);
             if(!editMode) {
