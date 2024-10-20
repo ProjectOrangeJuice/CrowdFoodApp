@@ -114,10 +114,16 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
                                     Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
                                     intent.putExtra("PRODUCT",response.body().getProduct());
                                     startActivity(intent);
+                                    getQuestion();
+
+                                    pause = false;
                                     break;
 
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     //No button clicked
+                                    getQuestion();
+
+                                    pause = false;
                                     break;
                             }
                         }
@@ -140,10 +146,16 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
                                         Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
                                         intent.putExtra("PRODUCT",response.body().getProduct());
                                         startActivity(intent);
+                                        getQuestion();
+
+                                        pause = false;
                                         break;
 
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         //No button clicked
+                                        getQuestion();
+
+                                        pause = false;
                                         break;
                                 }
                             }
@@ -167,10 +179,16 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
                                         Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
                                         intent.putExtra("PRODUCT",p);
                                         startActivity(intent);
+                                        getQuestion();
+
+                                        pause = false;
                                         break;
 
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         //No button clicked
+                                        getQuestion();
+
+                                        pause = false;
                                         break;
                                 }
                             }
@@ -201,10 +219,16 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
                                 Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
                                 intent.putExtra("PRODUCT",p);
                                 startActivity(intent);
+                                getQuestion();
+
+                                pause = false;
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:
                                 //No button clicked
+                                getQuestion();
+
+                                pause = false;
                                 break;
                         }
                     }
@@ -216,9 +240,7 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
 
             }
 
-            getQuestion();
 
-            pause = false;
         }
 
 
