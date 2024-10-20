@@ -56,11 +56,18 @@ public class ScanFragment extends Fragment {
         //should be done on another thread
         mCamera =  Camera.open();
         mCamera.setDisplayOrientation(90);
+
         cameraPreview = (LinearLayout) root.findViewById(R.id.la);
         mPreview = new CameraPreview(getContext(), mCamera);
         cameraPreview.addView(mPreview);
         mCamera.startPreview();
         mCamera = Camera.open(0);
+        //set camera to continually auto-focus
+        Camera.Parameters params = mCamera.getParameters();
+//*EDIT*//params.setFocusMode("continuous-picture");
+//It is better to use defined constraints as opposed to String, thanks to AbdelHady
+        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        mCamera.setParameters(params);
         mCamera.setDisplayOrientation(90);
         mPicture = getPictureCallback();
         mPreview.refreshCamera(mCamera);
@@ -104,13 +111,13 @@ public class ScanFragment extends Fragment {
 
     private void readBarcode(Bitmap bit){
         //get the image i copied
-        InputStream beep = null;
-        try {
-            beep = getContext().getAssets().open("qr.png");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        bit = BitmapFactory.decodeStream(beep);
+//        InputStream beep = null;
+//        try {
+//            beep = getContext().getAssets().open("qr.png");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        bit = BitmapFactory.decodeStream(beep);
         Log.i("BARCODE","size of image.. "+bit.getWidth());
         BarcodeDetector detector =
                 new BarcodeDetector.Builder(getContext())
