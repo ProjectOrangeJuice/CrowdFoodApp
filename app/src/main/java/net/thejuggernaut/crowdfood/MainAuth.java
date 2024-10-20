@@ -52,6 +52,7 @@ public class MainAuth extends AppCompatActivity {
 
     private void login() {
         WebAuthProvider.login(auth0)
+                .withScheme("demo")
                 .withAudience(String.format("https://%s/userinfo", getString(R.string.com_auth0_domain)))
                 .start(this, new AuthCallback() {
                     @Override

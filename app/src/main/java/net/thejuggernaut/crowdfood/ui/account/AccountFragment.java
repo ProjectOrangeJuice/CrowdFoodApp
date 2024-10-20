@@ -1,5 +1,6 @@
 package net.thejuggernaut.crowdfood.ui.account;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -7,12 +8,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -20,10 +23,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.Auth0Exception;
+import com.auth0.android.provider.VoidCallback;
+import com.auth0.android.provider.WebAuthProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import net.thejuggernaut.crowdfood.MainActivity;
+import net.thejuggernaut.crowdfood.MainAuth;
 import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.accountApi.AccountApi;
 import net.thejuggernaut.crowdfood.accountApi.Info;
@@ -66,9 +75,40 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        Button lg = (Button) root.findViewById(R.id.logoutBut);
+        lg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+
 
         v = root;
         return root;
+    }
+
+
+    private void logout(){
+        Auth0 auth0 = new Auth0(v.getContext());
+        WebAuthProvider.logout(auth0)
+                .withScheme("demo")
+                .start(v.getContext(), new VoidCallback() {
+                    @Override
+                    public void onSuccess(Void payload) {
+                        SharedPreferences pref = v.getContext().getSharedPreferences("AccountInfo",MODE_PRIVATE);
+                        pref.edit().putString("Token","").apply();
+
+                        Intent intent = new Intent(v.getContext(), MainAuth.class);
+                        startActivity(intent);
+                       getActivity().finish();
+                    }
+
+                    @Override
+                    public void onFailure(Auth0Exception error) {
+                        Toast.makeText(v.getContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void editMode() {
