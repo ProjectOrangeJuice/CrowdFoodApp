@@ -15,7 +15,6 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.GameMode" />
         <activity android:name=".ui.History" />
-        <activity android:name=".ui.Scanned" />
         <activity android:name=".ui.scan.DisplayProduct" />
         <activity
             android:name=".MainActivity"
