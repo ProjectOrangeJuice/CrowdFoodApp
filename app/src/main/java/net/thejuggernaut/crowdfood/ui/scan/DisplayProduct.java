@@ -24,7 +24,9 @@ import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
+import net.thejuggernaut.crowdfood.ui.previous.PreviousIng;
 import net.thejuggernaut.crowdfood.ui.previous.PreviousName;
+import net.thejuggernaut.crowdfood.ui.previous.PreviousNutrition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,8 +111,7 @@ public class DisplayProduct extends AppCompatActivity {
             }
 
             //Should we display history button?
-            System.out.println("Size of  changes "+p.getProductName().getChanges().length);
-            System.out.println(p.getProductName().getChanges());
+            System.out.println("Product .. "+p.getProductName().getChanges().length);
             if(p.getProductName().getChanges().length > 0){
                 //Yes
                 ((ImageButton) findViewById(R.id.nameHisButton)).setVisibility(View.VISIBLE);
@@ -165,7 +166,7 @@ public class DisplayProduct extends AppCompatActivity {
         //Check product name
 
         if(p.getProductName().getVotes().trustUp < 60){
-            if(p.getProductName().getChanges()[0] != null && p.getProductName().getChanges()[0].getVotes().trustUp > 60){
+            if(p.getProductName().getChanges().length != 0  && p.getProductName().getChanges()[0].getVotes().trustUp > 60){
                 alerted = true;
                 html += "&#8226; The product name has a low trust compared to a previous version <br>";
             }
@@ -173,7 +174,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         //Check ing
         if(p.getIngredients().getVotes().trustUp < 60){
-            if(p.getIngredients().getChanges()[0] != null && p.getIngredients().getChanges()[0].getVotes().trustUp > 60){
+            if(p.getIngredients().getChanges().length != 0 && p.getIngredients().getChanges()[0].getVotes().trustUp > 60){
                 html += "&#8226; The ingredients has a low trust compared to a previous version <br>";
                 alerted = true;
             }
@@ -181,7 +182,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         //Check nutrition
         if(p.getNutrition().getVotes().trustUp < 60){
-            if(p.getNutrition().getChanges()[0] != null && p.getNutrition().getChanges()[0].getVotes().trustUp > 60){
+            if(p.getNutrition().getChanges().length != 0  && p.getNutrition().getChanges()[0].getVotes().trustUp > 60){
                 html += "&#8226; The nutrition has a low trust compared to a previous version <br>";
                 alerted = true;
             }
@@ -220,6 +221,26 @@ public class DisplayProduct extends AppCompatActivity {
             } else {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
             }
+
+            //Should we display history button?
+            System.out.println(("Ing size "+p.getIngredients().getChanges().length));
+            if(p.getIngredients().getChanges().length > 0){
+                //Yes
+                ((ImageButton) findViewById(R.id.prevIngButton)).setVisibility(View.VISIBLE);
+                ((ImageButton) findViewById(R.id.prevIngButton)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(v.getContext(), PreviousIng.class);
+                        intent.putExtra("PRODUCTINGREDIENTS",p.getIngredients());
+                        startActivity(intent);
+                    }
+                });
+            }else{
+                //no
+                ((ImageButton) findViewById(R.id.prevIngButton)).setVisibility(View.GONE);
+            }
+
+
         } else {
             ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
             pn.setVisibility(View.GONE);
@@ -267,6 +288,24 @@ public class DisplayProduct extends AppCompatActivity {
             val2.setText(p.getNutrition().getRecommended());
             r.addView(val2);
 
+
+
+            //Should we display history button?
+            if(p.getNutrition().getChanges().length > 0){
+                //Yes
+                ((ImageButton) findViewById(R.id.prevNutButton)).setVisibility(View.VISIBLE);
+                ((ImageButton) findViewById(R.id.prevNutButton)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(v.getContext(), PreviousNutrition.class);
+                        intent.putExtra("PRODUCTNUTRITION",p.getNutrition());
+                        startActivity(intent);
+                    }
+                });
+            }else{
+                //no
+                ((ImageButton) findViewById(R.id.prevNutButton)).setVisibility(View.GONE);
+            }
 
         } else {
             EditText val1 = new EditText(this);

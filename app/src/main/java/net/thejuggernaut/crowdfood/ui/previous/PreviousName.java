@@ -30,8 +30,6 @@ public class PreviousName extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_previous_name);
 
-        TextView pn = (TextView) findViewById(R.id.productName);
-        EditText pne = (EditText) findViewById(R.id.productNameEdit);
         Intent intent = getIntent();
         p = (Name) intent.getSerializableExtra("PRODUCTNAME");
         LinearLayout main = (LinearLayout) findViewById(R.id.prevNameLayout);
