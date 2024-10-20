@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import net.thejuggernaut.crowdfood.gameApi.GameApi;
 import net.thejuggernaut.crowdfood.gameApi.SetupGame;
 import net.thejuggernaut.crowdfood.ui.GameMode;
 import net.thejuggernaut.crowdfood.ui.scan.DisplayProduct;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -83,18 +86,21 @@ private  void setupHistory(){
 private void displayGames(Game[] games){
     LinearLayout ml = (LinearLayout) v.findViewById(R.id.gameHisLayout);
     if(games != null) {
+
         for (Game g : games) {
             LinearLayout l = new LinearLayout(getContext());
             //Timestamp text
             long stmp = g.getStamp();
             Date d = new java.util.Date(stmp * 1000);
             SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+            TextView complete = new TextView(getContext());
+            complete.setText(Html.fromHtml("At <b> "+f.format(d)+" </b>you started a game that lasted x" +
+                    " and got <i>"+g.getPoints()+" </i>points!"));
 
-            TextView stamp = new TextView(getContext());
-            stamp.setText(f.format(d));
 
-            TextView points = new TextView(getContext());
-            points.setText("You got " + g.getPoints() + "!");
+
+            l.addView(complete);
+
             ml.addView(l);
         }
 
