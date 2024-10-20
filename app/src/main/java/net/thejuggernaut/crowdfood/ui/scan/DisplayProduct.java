@@ -1,10 +1,16 @@
 package net.thejuggernaut.crowdfood.ui.scan;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -13,21 +19,29 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
+import net.thejuggernaut.crowdfood.textReader.IngText;
+import net.thejuggernaut.crowdfood.textReader.ReaderApi;
+import net.thejuggernaut.crowdfood.textReader.SetupReader;
 import net.thejuggernaut.crowdfood.ui.previous.PreviousIng;
 import net.thejuggernaut.crowdfood.ui.previous.PreviousName;
 import net.thejuggernaut.crowdfood.ui.previous.PreviousNutrition;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +57,7 @@ public class DisplayProduct extends AppCompatActivity {
     ArrayList<EditText> items;
     ArrayList<EditText> values;
     DisplayFuncs tools;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +76,14 @@ public class DisplayProduct extends AppCompatActivity {
             p.getIngredients().setIngredients(new String[0]);
         }
 
-        tools = new DisplayFuncs(p,this);
+        tools = new DisplayFuncs(p, this);
 
 
         setupProductName();
         setupIngredients();
         setupNutrition();
         setupAlert();
+        setupCaptureButtons();
 
         //Enable edit button
         FloatingActionButton btn = (FloatingActionButton) findViewById(R.id.editButton);
@@ -80,6 +96,85 @@ public class DisplayProduct extends AppCompatActivity {
 
     }
 
+    final int CAMERA_CAPTURE = 1;
+    //captured picture uri
+    private Uri picUri;
+
+    private void setupCaptureButtons() {
+        ImageButton btn = (ImageButton) findViewById(R.id.captureIng);
+        Context c = this;
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+openCrop();
+
+            }
+
+        });
+
+
+    }
+
+    private void openCrop(){
+
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(this);
+
+
+    }
+
+    private void getText(Bitmap img){
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        IngText in = new IngText();
+        in.setIngredients(encoded);
+        ReaderApi readerAPI = SetupReader.getRetro(this);
+        Call<IngText> call = readerAPI.getIngText(in);
+        call.enqueue(new Callback<IngText>() {
+            @Override
+            public void onResponse(Call<IngText> call, Response<IngText> response) {
+                if (response.isSuccessful()) {
+                    Log.i("reader", response.body().getIngredients());
+
+                } else {
+                    //not found
+                    Log.i("UPDATE", response.message());
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<IngText> call, Throwable t) {
+                t.printStackTrace();
+            }
+
+        });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                    getText(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Toast.makeText(this,"Oops, an error. "+error,Toast.LENGTH_LONG);
+                Log.e("Error crop",error.getMessage());
+            }
+        }
+    }
 
     private void editMode(View v) {
         if (editMode) {
@@ -111,19 +206,19 @@ public class DisplayProduct extends AppCompatActivity {
             }
 
             //Should we display history button?
-            System.out.println("Product .. "+p.getProductName().getChanges().length);
-            if(p.getProductName().getChanges().length > 0){
+            System.out.println("Product .. " + p.getProductName().getChanges().length);
+            if (p.getProductName().getChanges().length > 0) {
                 //Yes
                 ((ImageButton) findViewById(R.id.nameHisButton)).setVisibility(View.VISIBLE);
                 ((ImageButton) findViewById(R.id.nameHisButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(v.getContext(), PreviousName.class);
-                        intent.putExtra("PRODUCTNAME",p.getProductName());
+                        intent.putExtra("PRODUCTNAME", p.getProductName());
                         startActivity(intent);
                     }
                 });
-            }else{
+            } else {
                 //no
                 ((ImageButton) findViewById(R.id.nameHisButton)).setVisibility(View.GONE);
             }
@@ -138,51 +233,51 @@ public class DisplayProduct extends AppCompatActivity {
 
     }
 
-    private void setupAlert(){
-        SharedPreferences pref= getSharedPreferences("AccountInfo",MODE_PRIVATE);
-        String allergies = pref.getString("Allergies","");
+    private void setupAlert() {
+        SharedPreferences pref = getSharedPreferences("AccountInfo", MODE_PRIVATE);
+        String allergies = pref.getString("Allergies", "");
         String[] allergiesList = allergies.split(",");
         boolean alerted = false;
         ArrayList<String> alerts = new ArrayList<>();
 
-        for(String val : p.getIngredients().getIngredients()){
-            for(String al : allergiesList){
-                if(val.toLowerCase().equals(al.toLowerCase()) && !val.equals("")){
-                    alerts.add("Product contains "+al);
+        for (String val : p.getIngredients().getIngredients()) {
+            for (String al : allergiesList) {
+                if (val.toLowerCase().equals(al.toLowerCase()) && !val.equals("")) {
+                    alerts.add("Product contains " + al);
                 }
             }
         }
 
-        if(alerts.size() > 0) {
+        if (alerts.size() > 0) {
             alerted = true;
         }
 
         String html = "<h1>Warning</h1>";
-        for(String alert : alerts){
-            html += "&#8226; "+alert+" <br>";
+        for (String alert : alerts) {
+            html += "&#8226; " + alert + " <br>";
         }
 
         //See if new changes could be an issue
         //Check product name
 
-        if(p.getProductName().getVotes().trustUp < 60){
-            if(p.getProductName().getChanges().length != 0  && p.getProductName().getChanges()[0].getVotes().trustUp > 60){
+        if (p.getProductName().getVotes().trustUp < 60) {
+            if (p.getProductName().getChanges().length != 0 && p.getProductName().getChanges()[0].getVotes().trustUp > 60) {
                 alerted = true;
                 html += "&#8226; The product name has a low trust compared to a previous version <br>";
             }
         }
 
         //Check ing
-        if(p.getIngredients().getVotes().trustUp < 60){
-            if(p.getIngredients().getChanges().length != 0 && p.getIngredients().getChanges()[0].getVotes().trustUp > 60){
+        if (p.getIngredients().getVotes().trustUp < 60) {
+            if (p.getIngredients().getChanges().length != 0 && p.getIngredients().getChanges()[0].getVotes().trustUp > 60) {
                 html += "&#8226; The ingredients has a low trust compared to a previous version <br>";
                 alerted = true;
             }
         }
 
         //Check nutrition
-        if(p.getNutrition().getVotes().trustUp < 60){
-            if(p.getNutrition().getChanges().length != 0  && p.getNutrition().getChanges()[0].getVotes().trustUp > 60){
+        if (p.getNutrition().getVotes().trustUp < 60) {
+            if (p.getNutrition().getChanges().length != 0 && p.getNutrition().getChanges()[0].getVotes().trustUp > 60) {
                 html += "&#8226; The nutrition has a low trust compared to a previous version <br>";
                 alerted = true;
             }
@@ -190,9 +285,9 @@ public class DisplayProduct extends AppCompatActivity {
 
         ((TextView) findViewById(R.id.alertText)).setText(Html.fromHtml(html));
 
-        if(alerted){
+        if (alerted) {
             ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.VISIBLE);
-        }else{
+        } else {
             ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.GONE);
         }
 
@@ -223,19 +318,19 @@ public class DisplayProduct extends AppCompatActivity {
             }
 
             //Should we display history button?
-            System.out.println(("Ing size "+p.getIngredients().getChanges().length));
-            if(p.getIngredients().getChanges().length > 0){
+            System.out.println(("Ing size " + p.getIngredients().getChanges().length));
+            if (p.getIngredients().getChanges().length > 0) {
                 //Yes
                 ((ImageButton) findViewById(R.id.prevIngButton)).setVisibility(View.VISIBLE);
                 ((ImageButton) findViewById(R.id.prevIngButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(v.getContext(), PreviousIng.class);
-                        intent.putExtra("PRODUCTINGREDIENTS",p.getIngredients());
+                        intent.putExtra("PRODUCTINGREDIENTS", p.getIngredients());
                         startActivity(intent);
                     }
                 });
-            }else{
+            } else {
                 //no
                 ((ImageButton) findViewById(R.id.prevIngButton)).setVisibility(View.GONE);
             }
@@ -252,14 +347,15 @@ public class DisplayProduct extends AppCompatActivity {
     EditText weight;
 
     private void setupNutrition() {
-        SharedPreferences pref = getSharedPreferences("AccountInfo",MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("AccountInfo", MODE_PRIVATE);
         String storedHashMapString = pref.getString("Recommended", "");
-        java.lang.reflect.Type type = new TypeToken<HashMap<String, Float>>(){}.getType();
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, Float>>() {
+        }.getType();
         Gson gson = new Gson();
         Map<String, Float> map = gson.fromJson(storedHashMapString, type);
         Map<String, Float> nodeMap =
                 new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        if(map != null) {
+        if (map != null) {
             nodeMap.putAll(map);
         }
         items = new ArrayList<>();
@@ -289,20 +385,19 @@ public class DisplayProduct extends AppCompatActivity {
             r.addView(val2);
 
 
-
             //Should we display history button?
-            if(p.getNutrition().getChanges().length > 0){
+            if (p.getNutrition().getChanges().length > 0) {
                 //Yes
                 ((ImageButton) findViewById(R.id.prevNutButton)).setVisibility(View.VISIBLE);
                 ((ImageButton) findViewById(R.id.prevNutButton)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(v.getContext(), PreviousNutrition.class);
-                        intent.putExtra("PRODUCTNUTRITION",p.getNutrition());
+                        intent.putExtra("PRODUCTNUTRITION", p.getNutrition());
                         startActivity(intent);
                     }
                 });
-            }else{
+            } else {
                 //no
                 ((ImageButton) findViewById(R.id.prevNutButton)).setVisibility(View.GONE);
             }
@@ -355,11 +450,6 @@ public class DisplayProduct extends AppCompatActivity {
             curRow.addView(val);
 
 
-
-
-
-
-
             if (!editMode) {
                 val.setEnabled(false);
                 EditText valr = new EditText(this);
@@ -367,12 +457,12 @@ public class DisplayProduct extends AppCompatActivity {
                 curRow.addView(valr);
                 valr.setEnabled(false);
 
-                if(nodeMap.containsKey(entry.getKey())){
+                if (nodeMap.containsKey(entry.getKey())) {
                     TextView rda = new TextView(this);
-                    System.out.println(entry.getKey()+" is "+entry.getValue()[1]+"/"+nodeMap.get(entry.getKey()));
-                    float percentage = (entry.getValue()[1] /nodeMap.get(entry.getKey()))*100;
-                    double p = Math.round(percentage*10)/10.0;
-                    rda.setText(p+"%");
+                    System.out.println(entry.getKey() + " is " + entry.getValue()[1] + "/" + nodeMap.get(entry.getKey()));
+                    float percentage = (entry.getValue()[1] / nodeMap.get(entry.getKey())) * 100;
+                    double p = Math.round(percentage * 10) / 10.0;
+                    rda.setText(p + "%");
                     curRow.addView(rda);
                 }
 
@@ -525,7 +615,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         if (changed) {
             FoodieAPI foodieAPI = SetupRetro.getRetro(this);
-            Call<Product> call = foodieAPI.updateProduct(p,p.getID());
+            Call<Product> call = foodieAPI.updateProduct(p, p.getID());
             call.enqueue(new Callback<Product>() {
                 @Override
                 public void onResponse(Call<Product> call, Response<Product> response) {

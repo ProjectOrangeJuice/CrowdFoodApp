@@ -41,4 +41,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services:7.8+'
     implementation 'com.auth0.android:auth0:1.+'
     implementation 'me.dm7.barcodescanner:zbar:1.9.13'
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 }
