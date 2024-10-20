@@ -154,7 +154,7 @@ public class DisplayProduct extends AppCompatActivity {
         TableRow r = new TableRow(this);
         if (p.getNutrition().getWeight() != "" || editMode) {
             TextView nutName = new TextView(this);
-            nutName.setText("Weight");
+            nutName.setText("Weight ");
             r.addView(nutName);
         }
         if (!editMode) {
@@ -164,7 +164,7 @@ public class DisplayProduct extends AppCompatActivity {
             r.addView(val1);
             if (p.getNutrition().getRecommended() != "") {
                 TextView rpo = new TextView(this);
-                rpo.setText("Recommended portion");
+                rpo.setText("Recommended portion ");
                 r.addView(rpo);
             }
             TextView val2 = new TextView(this);
@@ -178,7 +178,7 @@ public class DisplayProduct extends AppCompatActivity {
 
 
             TextView rpo = new TextView(this);
-            rpo.setText("Recommended portion");
+            rpo.setText("Recommended portion ");
             r.addView(rpo);
 
 
@@ -213,17 +213,23 @@ public class DisplayProduct extends AppCompatActivity {
             EditText val = new EditText(this);
 
 
-            if (!editMode) {
-                val.setEnabled(false);
 
-            }
-            values.add(val);
+
 
 
             val.setText(String.valueOf(entry.getValue()[0]));
 
 
             curRow.addView(val);
+            if (!editMode) {
+                val.setEnabled(false);
+                EditText valr = new EditText(this);
+                valr.setText(String.valueOf(entry.getValue()[1]));
+                curRow.addView(valr);
+                valr.setEnabled(false);
+
+            }
+            values.add(val);
 
             TableTextWatch tbc = new TableTextWatch(items, values, curRow, ent2, val, this, tbl);
             val.addTextChangedListener(tbc);
