@@ -7,30 +7,31 @@
     tools:context=".ui.GameMode">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="150dp"
-        android:layout_marginEnd="150dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
+        <fragment
+            android:id="@+id/fragment3"
+            android:name="net.thejuggernaut.crowdfood.ui.game.GamePlay"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Scan" />
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/questionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="Find a product that starts with .."
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/endGame"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:onClick="endGame"
             android:text="End" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
