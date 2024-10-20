@@ -9,6 +9,15 @@ public class Game  implements Serializable {
     String user;
     String[] questions;
     int stamp;
+    int endStamp;
+
+    public int getEndStamp() {
+        return endStamp;
+    }
+
+    public void setEndStamp(int endStamp) {
+        this.endStamp = endStamp;
+    }
 
     public String getSession() {
         return session;

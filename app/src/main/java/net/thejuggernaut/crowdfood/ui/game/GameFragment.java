@@ -30,6 +30,7 @@ import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,6 +61,13 @@ public class GameFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        Log.e("DEBUG", "onResume of fragement");
+        setupHistory();
+        super.onResume();
+    }
+
 private  void setupHistory(){
     GameApi gameAPI = SetupGame.getRetro(getContext());
     Call<Game[]> call = gameAPI.getGames();
@@ -85,6 +93,7 @@ private  void setupHistory(){
 
 private void displayGames(Game[] games){
     LinearLayout ml = (LinearLayout) v.findViewById(R.id.gameHisLayout);
+    ml.removeAllViews();
     if(games != null) {
 
         for (Game g : games) {
@@ -92,11 +101,20 @@ private void displayGames(Game[] games){
             //Timestamp text
             long stmp = g.getStamp();
             Date d = new java.util.Date(stmp * 1000);
+
+            long stmp2 = g.getEndStamp();
+            Date d2 = new java.util.Date(stmp2 * 1000);
+            long diff = d2.getTime() - d.getTime();
             SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy hh:mm");
             TextView complete = new TextView(getContext());
-            complete.setText(Html.fromHtml("At <b> "+f.format(d)+" </b>you started a game that lasted x" +
-                    " and got <i>"+g.getPoints()+" </i>points!"));
-
+            if(!g.isActive()) {
+                complete.setText(Html.fromHtml("At <b> " + f.format(d) + " </b>you started a game that lasted " +
+                        TimeUnit.MILLISECONDS.toMinutes(diff) +
+                        " minutes and got <i>" + g.getPoints() + " </i>points!"));
+            }else{
+                complete.setText(Html.fromHtml("At <b> " + f.format(d) + " </b>you started a game that " +
+                        "currently has <i>" + g.getPoints() + " </i>points!"));
+            }
 
 
             l.addView(complete);
