@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,7 +170,7 @@ public class ScanFragment extends Fragment {
             if(response.isSuccessful()) {
 
                 //Display the results
-                Intent intent = new Intent(getView().getContext(), Scanned.class);
+                Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
                 intent.putExtra("PRODUCT",response.body());
                 startActivity(intent);
 
