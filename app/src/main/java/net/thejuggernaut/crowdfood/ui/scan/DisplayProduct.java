@@ -141,7 +141,7 @@ public class DisplayProduct extends AppCompatActivity {
         SharedPreferences pref= getSharedPreferences("AccountInfo",MODE_PRIVATE);
         String allergies = pref.getString("Allergies","");
         String[] allergiesList = allergies.split(",");
-
+        boolean alerted = false;
         ArrayList<String> alerts = new ArrayList<>();
 
         for(String val : p.getIngredients().getIngredients()){
@@ -152,10 +152,8 @@ public class DisplayProduct extends AppCompatActivity {
             }
         }
 
-        if(alerts.size() > 0){
-            ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.VISIBLE);
-        }else{
-            ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.GONE);
+        if(alerts.size() > 0) {
+            alerted = true;
         }
 
         String html = "<h1>Warning</h1>";
@@ -163,9 +161,39 @@ public class DisplayProduct extends AppCompatActivity {
             html += "&#8226; "+alert+" <br>";
         }
 
+        //See if new changes could be an issue
+        //Check product name
+
+        if(p.getProductName().getVotes().trustUp < 60){
+            if(p.getProductName().getChanges()[0] != null && p.getProductName().getChanges()[0].getVotes().trustUp > 60){
+                alerted = true;
+                html += "&#8226; The product name has a low trust compared to a previous version <br>";
+            }
+        }
+
+        //Check ing
+        if(p.getIngredients().getVotes().trustUp < 60){
+            if(p.getIngredients().getChanges()[0] != null && p.getIngredients().getChanges()[0].getVotes().trustUp > 60){
+                html += "&#8226; The ingredients has a low trust compared to a previous version <br>";
+                alerted = true;
+            }
+        }
+
+        //Check nutrition
+        if(p.getNutrition().getVotes().trustUp < 60){
+            if(p.getNutrition().getChanges()[0] != null && p.getNutrition().getChanges()[0].getVotes().trustUp > 60){
+                html += "&#8226; The nutrition has a low trust compared to a previous version <br>";
+                alerted = true;
+            }
+        }
+
         ((TextView) findViewById(R.id.alertText)).setText(Html.fromHtml(html));
 
-
+        if(alerted){
+            ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.VISIBLE);
+        }else{
+            ((LinearLayout) findViewById(R.id.alertBox)).setVisibility(View.GONE);
+        }
 
     }
 
