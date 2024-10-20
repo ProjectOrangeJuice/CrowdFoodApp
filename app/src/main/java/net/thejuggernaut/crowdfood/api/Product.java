@@ -10,7 +10,7 @@ public class Product implements Serializable {
     Name productName;
     Ingredients ingredients;
     Nutrition nutrition;
-    Serving serving;
+
 
 
 
@@ -47,14 +47,6 @@ public class Product implements Serializable {
 
     public void setNutrition(Nutrition nutrition) {
         this.nutrition = nutrition;
-    }
-
-    public Serving getServing() {
-        return serving;
-    }
-
-    public void setServing(Serving serving) {
-        this.serving = serving;
     }
 
     public int getVersion() {

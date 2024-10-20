@@ -85,8 +85,8 @@ public class Scanned extends AppCompatActivity {
         setupTitle(p.getProductName().getName());
         setupWarnings();
         setupIngredients(p.getIngredients().getIngredients());
-        setupServing(p.getServing().getServing());
-        setupNutritional(p.getNutrition().getNutrition());
+       // setupServing(p.getServing().getServing());
+       // setupNutritional(p.getNutrition().getNutrition());
     }
 
 

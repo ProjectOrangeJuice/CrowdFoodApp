@@ -118,14 +118,14 @@ public class DisplayProduct extends AppCompatActivity {
         nutName.setText("Typical values");
         r.addView(nutName);
         TextView val1 = new TextView(this);
-        val1.setText("Per..");
+        val1.setText(p.getNutrition().getWeight());
         r.addView(val1);
 
         TextView val2 = new TextView(this);
-        val2.setText(p.getServing().getServing());
+        val2.setText(p.getNutrition().getRecommended());
         r.addView(val2);
         tbl.addView(r);
-        for (Map.Entry<String, Float> entry : p.getNutrition().getNutrition().entrySet()) {
+        for (Map.Entry<String, Float[]> entry : p.getNutrition().getNutrition().entrySet()) {
             TableRow curRow = new TableRow(this);
             if(!editMode) {
                 TextView ent = new TextView(this);
@@ -141,12 +141,17 @@ public class DisplayProduct extends AppCompatActivity {
 
 
             EditText val = new EditText(this);
+            EditText recomm = new EditText(this);
             if(!editMode) {
                 val.setEnabled(false);
+                recomm.setEnabled(false);
             }
             values.add(val);
-            val.setText(String.valueOf(entry.getValue()));
+            values.add(recomm);
+            val.setText(String.valueOf(entry.getValue()[0]));
+            recomm.setText(String.valueOf(entry.getValue()[1]));
             curRow.addView(val);
+            curRow.addView(recomm);
 
             tbl.addView(curRow);
 

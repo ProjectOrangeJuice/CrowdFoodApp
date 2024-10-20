@@ -4,17 +4,19 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class Nutrition implements Serializable {
-    Map<String,Float> nutrition;
+    Map<String,Float[]> nutrition;
     int up;
     int down;
     int stamp;
+    String weight;
+    String recommended;
     Nutrition[] changes;
 
-    public Map<String, Float> getNutrition() {
+    public Map<String, Float[]> getNutrition() {
         return nutrition;
     }
 
-    public void setNutrition(Map<String, Float> nutrition) {
+    public void setNutrition(Map<String, Float[]> nutrition) {
         this.nutrition = nutrition;
     }
 
@@ -48,5 +50,21 @@ public class Nutrition implements Serializable {
 
     public void setChanges(Nutrition[] changes) {
         this.changes = changes;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public String getRecommended() {
+        return recommended;
+    }
+
+    public void setRecommended(String recommended) {
+        this.recommended = recommended;
     }
 }
