@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
@@ -34,6 +35,7 @@ import net.thejuggernaut.crowdfood.api.SetupRetro;
 import net.thejuggernaut.crowdfood.ui.CameraPreview;
 import net.thejuggernaut.crowdfood.ui.Scanned;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -66,7 +68,8 @@ public class ScanFragment extends Fragment {
         Camera.Parameters params = mCamera.getParameters();
 //*EDIT*//params.setFocusMode("continuous-picture");
 //It is better to use defined constraints as opposed to String, thanks to AbdelHady
-        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        //Only works on real device
+        //params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         mCamera.setParameters(params);
         mCamera.setDisplayOrientation(90);
         mPicture = getPictureCallback();
@@ -118,10 +121,24 @@ public class ScanFragment extends Fragment {
 //            e.printStackTrace();
 //        }
 //        bit = BitmapFactory.decodeStream(beep);
+
+
+//        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() +
+//                "/a";
+//        try (FileOutputStream out = new FileOutputStream(file_path)) {
+//            Log.i("OUTPUT",file_path);
+//            bit.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+//            // PNG is a lossless format, the compression factor (100) is ignored
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+
+
         Log.i("BARCODE","size of image.. "+bit.getWidth());
         BarcodeDetector detector =
                 new BarcodeDetector.Builder(getContext())
-                        .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+                        .setBarcodeFormats(Barcode.UPC_A | Barcode.UPC_E | Barcode.EAN_8 | Barcode.EAN_13)
                         .build();
         if(!detector.isOperational()){
            Log.e("BARCODE","Couldn't setup");
