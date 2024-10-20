@@ -78,12 +78,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         tools = new DisplayFuncs(p, this);
 
-
-        setupProductName();
-        setupIngredients();
-        setupNutrition();
-        setupAlert();
-        setupCaptureButtons();
+setup();
 
         //Enable edit button
         FloatingActionButton btn = (FloatingActionButton) findViewById(R.id.editButton);
@@ -96,9 +91,14 @@ public class DisplayProduct extends AppCompatActivity {
 
     }
 
-    final int CAMERA_CAPTURE = 1;
-    //captured picture uri
-    private Uri picUri;
+    private void setup(){
+        setupProductName();
+        setupIngredients();
+        setupNutrition();
+        setupAlert();
+        setupCaptureButtons();
+
+    }
 
     private void setupCaptureButtons() {
         ImageButton btn = (ImageButton) findViewById(R.id.captureIng);
@@ -139,6 +139,10 @@ openCrop();
             public void onResponse(Call<IngText> call, Response<IngText> response) {
                 if (response.isSuccessful()) {
                     Log.i("reader", response.body().getIngredients());
+                    if(!response.body().getIngredients().equals("")){
+                        p.getIngredients().setIngredients(response.body().getIngredients().split(","));
+                        setup();
+                    }
 
                 } else {
                     //not found
@@ -622,6 +626,7 @@ openCrop();
                     if (response.isSuccessful()) {
                         Log.i("UPDATE", "WORKED");
                         p = response.body();
+                        setup();
                     } else {
                         //not found
                         Log.i("UPDATE", response.message());
