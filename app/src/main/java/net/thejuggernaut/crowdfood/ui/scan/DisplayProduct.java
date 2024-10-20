@@ -24,6 +24,7 @@ import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
+import net.thejuggernaut.crowdfood.ui.previous.PreviousName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,6 +106,25 @@ public class DisplayProduct extends AppCompatActivity {
                         ((ImageButton) findViewById(R.id.productNameDown)), vo);
             } else {
                 ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.GONE);
+            }
+
+            //Should we display history button?
+            System.out.println("Size of  changes "+p.getProductName().getChanges().length);
+            System.out.println(p.getProductName().getChanges());
+            if(p.getProductName().getChanges().length > 0){
+                //Yes
+                ((ImageButton) findViewById(R.id.nameHisButton)).setVisibility(View.VISIBLE);
+                ((ImageButton) findViewById(R.id.nameHisButton)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(v.getContext(), PreviousName.class);
+                        intent.putExtra("PRODUCTNAME",p.getProductName());
+                        startActivity(intent);
+                    }
+                });
+            }else{
+                //no
+                ((ImageButton) findViewById(R.id.nameHisButton)).setVisibility(View.GONE);
             }
 
 
@@ -190,9 +210,9 @@ public class DisplayProduct extends AppCompatActivity {
         Map<String, Float> map = gson.fromJson(storedHashMapString, type);
         Map<String, Float> nodeMap =
                 new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
-        nodeMap.putAll(map);
-
+        if(map != null) {
+            nodeMap.putAll(map);
+        }
         items = new ArrayList<>();
         values = new ArrayList<>();
 

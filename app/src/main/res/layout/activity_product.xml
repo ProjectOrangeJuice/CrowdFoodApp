@@ -45,6 +45,14 @@
                     android:text="Name"
                     android:visibility="gone" />
 
+                <ImageButton
+                    android:id="@+id/nameHisButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:src="@android:drawable/ic_menu_recent_history" />
+
                 <LinearLayout
                     android:id="@+id/nutritionVoteLayout"
                     android:layout_width="match_parent"

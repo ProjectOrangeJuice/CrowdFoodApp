@@ -50,7 +50,7 @@ public class DisplayFuncs {
     }
 
 
-    public void setColour(LinearLayout l, Trust t){
+    public static void setColour(LinearLayout l, Trust t){
         int dif = Math.abs(t.trustDown - t.trustUp);
         if(dif <= 30){
             //Set to red. We don't know which
