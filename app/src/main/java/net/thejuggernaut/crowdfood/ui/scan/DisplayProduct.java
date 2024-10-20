@@ -150,24 +150,38 @@ public class DisplayProduct extends AppCompatActivity {
         tbl.removeAllViews();
         //headings
         TableRow r = new TableRow(this);
-        TextView nutName = new TextView(this);
-        nutName.setText("Typical values");
-        r.addView(nutName);
+        if(p.getNutrition().getWeight() != "" || editMode) {
+            TextView nutName = new TextView(this);
+            nutName.setText("Weight");
+            r.addView(nutName);
+        }
         if(!editMode) {
             tools.setColour(findViewById(R.id.nutritionShape),p.getNutrition().getVotes());
             TextView val1 = new TextView(this);
             val1.setText(p.getNutrition().getWeight());
             r.addView(val1);
-
+            if(p.getNutrition().getRecommended() != "") {
+                TextView rpo = new TextView(this);
+                rpo.setText("Recommended portion");
+                r.addView(rpo);
+            }
             TextView val2 = new TextView(this);
             val2.setText(p.getNutrition().getRecommended());
             r.addView(val2);
         }else{
             EditText val1 = new EditText(this);
             val1.setText(p.getNutrition().getWeight());
+            val1.setHint("100g");
             r.addView(val1);
 
+
+                TextView rpo = new TextView(this);
+                rpo.setText("Recommended portion");
+                r.addView(rpo);
+
+
             EditText val2 = new EditText(this);
+            val2.setHint("10g");
             val2.setText(p.getNutrition().getRecommended());
             r.addView(val2);
             recommended = val2;
@@ -196,17 +210,19 @@ public class DisplayProduct extends AppCompatActivity {
 
 
             EditText val = new EditText(this);
-            EditText recomm = new EditText(this);
+
             if(!editMode) {
                 val.setEnabled(false);
-                recomm.setEnabled(false);
+
             }
             values.add(val);
-            values.add(recomm);
+
+
             val.setText(String.valueOf(entry.getValue()[0]));
-            recomm.setText(String.valueOf(entry.getValue()[1]));
+
+
             curRow.addView(val);
-            curRow.addView(recomm);
+
 
             tbl.addView(curRow);
 
@@ -220,6 +236,8 @@ public class DisplayProduct extends AppCompatActivity {
             items.add(ent);
             EditText val = new EditText(this);
             values.add(val);
+            ent.setHint("Fat");
+            val.setHint("100g");
             curRow.addView(val);
             tbl.addView(curRow);
         }
@@ -239,38 +257,102 @@ public class DisplayProduct extends AppCompatActivity {
 
     }
 
+    private boolean checkTable(Map<String,float[]> newmap){
+        for (Map.Entry<String, float[]> entry : p.getNutrition().getNutrition().entrySet()) {
+            if (!newmap.containsKey(entry.getKey())) {
+                System.out.println("I can't find a value so returning true");
+                return true;
+            }
+            boolean found = false;
+            for (Map.Entry<String, float[]> nentry : newmap.entrySet()) {
+                if (nentry.getKey() == entry.getKey() &&
+                        nentry.getValue()[0] == entry.getValue()[0]) {
+                    found = true;
+                }
+
+            }
+            if (!found) {
+                System.out.println("I can't find a float so returning true");
+                return true;
+            }
+            newmap.remove(entry.getKey());
+
+        }
+return false;
+    }
+
+
+    private boolean checkIng(String[] ing ){
+        String[] old = p.getIngredients().getIngredients();
+        if(old.length != ing.length){
+            System.out.println("Ing diff size");
+            return  true;
+        }
+        for(String i : ing){
+            boolean found = false;
+            for(String x : old){
+                if(x.equals(i)){
+                    found = true;
+                }
+            }
+
+            if(!found){
+                System.out.println("Could not find "+i);
+                return true;
+            }
+        }
+return false;
+
+    }
+
     private void save(){
         EditText pne = (EditText) findViewById(R.id.productNameEdit);
         EditText inge = (EditText) findViewById(R.id.ingredientsEdit);
         Boolean changed = false;
-        if(pne.getText().toString() != p.getProductName().getName()){
+        if(!pne.getText().toString().equals(p.getProductName().getName())){
+            System.out.println("Update due to name.");
+
             changed = true;
             p.getProductName().setName(pne.getText().toString());
         }
 
-        if(inge.getText().toString().split(",") != p.getIngredients().getIngredients()){
+
+
+        if(checkIng(inge.getText().toString().split(","))){
+            System.out.println("Update due to ing.");
             changed = true;
             p.getIngredients().setIngredients(inge.getText().toString().split(","));
         }
-        changed = true; //need to check to see if nutritional info has changed
-        p.getNutrition().setRecommended(recommended.getText().toString());
-        p.getNutrition().setWeight(weight.getText().toString());
-        Map<String,float[]> n = new HashMap<>();
-        for(int i = 0; i < items.size() -1; i++) {
-            int v1 = i * 2;
-            if (items.get(i).getText().toString().equals("")
-                    && values.get(v1).getText().toString().equals("")
-                    && values.get(v1 + 1).getText().toString().equals("")) {
-                System.out.println("Empty value");
-            } else {
-               float[] floatvals = {Float.parseFloat(values.get(v1).getText().toString()),
-                        Float.parseFloat(values.get(v1 + 1).getText().toString())};
 
-            n.put(items.get(i).getText().toString(), floatvals);
-        }
+
+        //Get the new map of values
+            Map<String,float[]> n = new HashMap<>();
+            for(int i = 0; i < items.size() -1; i++) {
+
+                if (items.get(i).getText().toString().equals("")
+                        && values.get(i).getText().toString().equals("")){
+                    System.out.println("Empty value");
+                } else {
+                    float[] floatvals = {Float.parseFloat(values.get(i).getText().toString()),
+                            0};
+
+                    n.put(items.get(i).getText().toString(), floatvals);
+                }
             }
 
-        p.getNutrition().setNutrition(n);
+
+            if(!p.getNutrition().getRecommended().equals(recommended.getText().toString()) ||
+        !p.getNutrition().getWeight().equals(weight.getText().toString())||
+                checkTable(n) ){
+
+                changed = true; //need to check to see if nutritional info has changed
+                p.getNutrition().setRecommended(recommended.getText().toString());
+                p.getNutrition().setWeight(weight.getText().toString());
+
+                p.getNutrition().setNutrition(n);
+
+            }
+
 
         if(changed){
             FoodieAPI foodieAPI = SetupRetro.getRetro();
