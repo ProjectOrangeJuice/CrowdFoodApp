@@ -1,6 +1,7 @@
 package net.thejuggernaut.crowdfood.ui.game;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,8 @@ import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.gameApi.Game;
 import net.thejuggernaut.crowdfood.gameApi.GameApi;
 import net.thejuggernaut.crowdfood.gameApi.SetupGame;
+import net.thejuggernaut.crowdfood.ui.GameMode;
+import net.thejuggernaut.crowdfood.ui.scan.DisplayProduct;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -108,6 +111,8 @@ private void startGame(){
 
             SharedPreferences pref = getContext().getSharedPreferences("Game", Context.MODE_PRIVATE);
             pref.edit().putString("Session",response.body().getSession()).apply();
+            Intent intent = new Intent(getView().getContext(), GameMode.class);
+            startActivity(intent);
 
         } else {
 
