@@ -54,6 +54,7 @@ public class MainAuth extends AppCompatActivity {
         WebAuthProvider.login(auth0)
                 .withScheme("demo")
                 .withAudience(String.format("https://%s/userinfo", getString(R.string.com_auth0_domain)))
+                //.withAudience("https://project.gateway")
                 .start(this, new AuthCallback() {
                     @Override
                     public void onFailure(@NonNull final Dialog dialog) {
