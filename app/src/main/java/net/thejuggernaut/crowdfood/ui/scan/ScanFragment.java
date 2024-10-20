@@ -149,12 +149,46 @@ public class ScanFragment extends Fragment {
         try {
             Barcode thisCode = barcodes.valueAt(0);
             Log.i("BARCODE", "Value is " + thisCode.rawValue);
+            //scanItem(thisCode.rawValue);
+
+
+
+
         }catch (Exception e){
             Log.e("BARCODE",e.getMessage());
         }
+        mCamera.release();
+        scanItem("000343");
     }
 
+    private  void scanItem(String barcode){
+        FoodieAPI foodieAPI = SetupRetro.getRetro();
+        Call<Product> call = foodieAPI.loadProduct(barcode);
+        call.enqueue(new Callback<Product>() { @Override
+        public void onResponse(Call<Product> call, Response<Product> response) {
+            if(response.isSuccessful()) {
 
+                //Display the results
+                Intent intent = new Intent(getView().getContext(), Scanned.class);
+                intent.putExtra("PRODUCT",response.body());
+                startActivity(intent);
+
+
+
+            } else {
+                //not found
+                Log.i("PRODUCT",response.message());
+            }
+        }
+
+
+            @Override
+            public void onFailure(Call<Product> call, Throwable t) {
+                t.printStackTrace();
+            }
+
+        });
+    }
 
     public void scanItem(final View view){
         String barcode = "000343";

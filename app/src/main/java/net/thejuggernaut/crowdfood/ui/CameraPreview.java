@@ -31,6 +31,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             Log.d(VIEW_LOG_TAG, "Error setting camera preview: " + e.getMessage());
         }
     }
+
+
  
     public void refreshCamera(Camera camera) {
         if (mHolder.getSurface() == null) {
