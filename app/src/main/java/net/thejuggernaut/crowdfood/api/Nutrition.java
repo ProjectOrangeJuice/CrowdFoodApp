@@ -15,7 +15,7 @@ public class Nutrition implements Serializable {
     public Trust getVotes() {
         return votes;
     }
-    public boolean isVote() {
+    public boolean isVoteable() {
         return vote;
     }
 

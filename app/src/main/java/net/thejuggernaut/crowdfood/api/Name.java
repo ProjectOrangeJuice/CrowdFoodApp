@@ -13,7 +13,7 @@ public class Name implements Serializable {
     public String getName() {
         return name;
     }
-    public boolean isVote() {
+    public boolean isVoteable() {
         return vote;
     }
 

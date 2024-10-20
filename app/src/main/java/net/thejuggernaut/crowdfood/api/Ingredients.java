@@ -12,7 +12,7 @@ public class Ingredients implements Serializable {
     Nutrition[] changes;
 
 
-    public boolean isVote() {
+    public boolean isVoteable() {
         return vote;
     }
 
