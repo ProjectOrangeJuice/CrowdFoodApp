@@ -6,6 +6,13 @@ public class Play  implements Serializable {
     String barcode;
     String session;
 
+    public  Play(){};
+
+    public Play(String barcode, String session){
+        this.barcode = barcode;
+        this.session = session;
+    }
+
     public String getBarcode() {
         return barcode;
     }

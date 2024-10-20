@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
 import net.thejuggernaut.crowdfood.gameApi.Game;
 import net.thejuggernaut.crowdfood.gameApi.GameApi;
+import net.thejuggernaut.crowdfood.gameApi.Play;
+import net.thejuggernaut.crowdfood.gameApi.PlayResult;
 import net.thejuggernaut.crowdfood.gameApi.Question;
 import net.thejuggernaut.crowdfood.gameApi.SetupGame;
 import net.thejuggernaut.crowdfood.ui.GameMode;
@@ -42,6 +45,7 @@ import retrofit2.Response;
 
 public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler {
     private ZBarScannerView mScannerView;
+    private boolean pause = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -62,9 +66,11 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
 
     @Override
     public void handleResult(Result rawResult) {
-        Toast.makeText(getActivity(), "Contents = " + rawResult.getContents() +
-                ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
-        scanItem(rawResult.getContents());
+        if(!pause) {
+            Toast.makeText(getActivity(), "Contents = " + rawResult.getContents() +
+                    ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
+            scanItem(rawResult.getContents());
+        }
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
@@ -87,14 +93,96 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
 
 
     private  void scanItem(String barcode){
-        FoodieAPI foodieAPI = SetupRetro.getRetro(getContext());
-        Call<Product> call = foodieAPI.loadProduct(barcode);
-        call.enqueue(new Callback<Product>() { @Override
-        public void onResponse(Call<Product> call, Response<Product> response) {
+        pause = true;
+        GameApi gameAPI = SetupGame.getRetro(getContext());
+        SharedPreferences pref = getActivity().getSharedPreferences("Game", Context.MODE_PRIVATE);
+        Play answer = new Play(barcode,pref.getString("Session",""));
+
+        Call<PlayResult> call = gameAPI.playQuestion(answer);
+        call.enqueue(new Callback<PlayResult>() { @Override
+        public void onResponse(Call<PlayResult> call, Response<PlayResult> response) {
             if(response.isSuccessful()) {
 
+                if(response.body().isCorrect()){
+                    //Correct answer!
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+
+                                    Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
+                                    intent.putExtra("PRODUCT",response.body().getProduct());
+                                    startActivity(intent);
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //No button clicked
+                                    break;
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Correct answer").setMessage("Check the product?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+                }else{
+
+                    if(response.body().isFound()){
+                        //Wrong product
+                        //Ask if they want to create it
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+
+                                        Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
+                                        intent.putExtra("PRODUCT",response.body().getProduct());
+                                        startActivity(intent);
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Wrong answer").setMessage("Check the product?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+
+                    }else{
+                        //Product not found
+                        //Ask if they want to create it
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+
+                                        Product p = new Product();//All empty
+                                        p.setID(barcode);
+                                        Intent intent = new Intent(getView().getContext(), DisplayProduct.class);
+                                        intent.putExtra("PRODUCT",p);
+                                        startActivity(intent);
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Not found").setMessage("Create it?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    }
 
 
+                }
 
 
             } else {
@@ -127,15 +215,46 @@ public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler
                         .setNegativeButton("No", dialogClickListener).show();
 
             }
+
+            getQuestion();
+
+            pause = false;
         }
 
 
             @Override
-            public void onFailure(Call<Product> call, Throwable t) {
+            public void onFailure(Call<PlayResult> call, Throwable t) {
                 t.printStackTrace();
             }
 
         });
     }
+
+    private void getQuestion(){
+        GameApi gameAPI = SetupGame.getRetro(getContext());
+        SharedPreferences pref = getContext().getSharedPreferences("Game", Context.MODE_PRIVATE);
+        Call<Question> call = gameAPI.loadQuestion(pref.getString("Session",""));
+        call.enqueue(new Callback<Question>() { @Override
+        public void onResponse(Call<Question> call, Response<Question> response) {
+            if(response.isSuccessful()) {
+
+                pref.edit().putString("question",response.body().getQuestion()).apply();
+                ((TextView) getActivity().findViewById(R.id.questionText)).setText(pref.getString("question","oops, an error!"));
+
+            } else {
+
+                Log.i("Game api",response.message());
+            }
+        }
+
+
+            @Override
+            public void onFailure(Call<Question> call, Throwable t) {
+                t.printStackTrace();
+            }
+
+        });
+    }
+
 
 }
