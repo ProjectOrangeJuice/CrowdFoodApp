@@ -10,7 +10,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SetupRetro implements Serializable {
-    public static final String BASE_URL = "http://192.168.1.101:8000";
+    public static final String BASE_URL = "http://192.168.1.102:8000";
 
     public static FoodieAPI getRetro(){
         Gson gson = new GsonBuilder()

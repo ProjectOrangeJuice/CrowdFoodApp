@@ -23,6 +23,7 @@ import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -116,7 +117,8 @@ public class DisplayProduct extends AppCompatActivity {
             pne.setVisibility(View.VISIBLE);
         }
     }
-
+    EditText recommended;
+    EditText weight;
     private void setupNutrition() {
 
         items = new ArrayList<>();
@@ -129,15 +131,29 @@ public class DisplayProduct extends AppCompatActivity {
         TextView nutName = new TextView(this);
         nutName.setText("Typical values");
         r.addView(nutName);
-        TextView val1 = new TextView(this);
-        val1.setText(p.getNutrition().getWeight());
-        r.addView(val1);
+        if(!editMode) {
+            TextView val1 = new TextView(this);
+            val1.setText(p.getNutrition().getWeight());
+            r.addView(val1);
 
-        TextView val2 = new TextView(this);
-        val2.setText(p.getNutrition().getRecommended());
-        r.addView(val2);
+            TextView val2 = new TextView(this);
+            val2.setText(p.getNutrition().getRecommended());
+            r.addView(val2);
+        }else{
+            EditText val1 = new EditText(this);
+            val1.setText(p.getNutrition().getWeight());
+            r.addView(val1);
+
+            EditText val2 = new EditText(this);
+            val2.setText(p.getNutrition().getRecommended());
+            r.addView(val2);
+            recommended = val2;
+            weight = val1;
+        }
+
+
         tbl.addView(r);
-        for (Map.Entry<String, Float[]> entry : p.getNutrition().getNutrition().entrySet()) {
+        for (Map.Entry<String, float[]> entry : p.getNutrition().getNutrition().entrySet()) {
             TableRow curRow = new TableRow(this);
             if(!editMode) {
                 TextView ent = new TextView(this);
@@ -189,6 +205,8 @@ public class DisplayProduct extends AppCompatActivity {
                 Button down = (Button) findViewById(R.id.nutritionDown);
                 down.setText("Down: " + p.getIngredients().getDown());
             }
+        }else{
+            ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.GONE);
         }
 
     }
@@ -206,6 +224,25 @@ public class DisplayProduct extends AppCompatActivity {
             changed = true;
             p.getIngredients().setIngredients(inge.getText().toString().split(","));
         }
+        changed = true; //need to check to see if nutritional info has changed
+        p.getNutrition().setRecommended(recommended.getText().toString());
+        p.getNutrition().setWeight(weight.getText().toString());
+        Map<String,float[]> n = new HashMap<>();
+        for(int i = 0; i < items.size() -1; i++) {
+            int v1 = i * 2;
+            if (items.get(i).getText().toString().equals("")
+                    && values.get(v1).getText().toString().equals("")
+                    && values.get(v1 + 1).getText().toString().equals("")) {
+                System.out.println("Empty value");
+            } else {
+               float[] floatvals = {Float.parseFloat(values.get(v1).getText().toString()),
+                        Float.parseFloat(values.get(v1 + 1).getText().toString())};
+
+            n.put(items.get(i).getText().toString(), floatvals);
+        }
+            }
+
+        p.getNutrition().setNutrition(n);
 
         if(changed){
             FoodieAPI foodieAPI = SetupRetro.getRetro();
