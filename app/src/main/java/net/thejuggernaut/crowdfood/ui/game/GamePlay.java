@@ -42,14 +42,12 @@ import retrofit2.Response;
 
 public class GamePlay extends Fragment  implements ZBarScannerView.ResultHandler {
     private ZBarScannerView mScannerView;
-    View v;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
 
         mScannerView = new ZBarScannerView(getActivity());
-        v = mScannerView;
 
         return mScannerView;
     }
