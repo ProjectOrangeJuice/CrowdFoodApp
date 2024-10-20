@@ -1,8 +1,9 @@
 package net.thejuggernaut.crowdfood.api;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Ingredients {
+public class Ingredients implements Serializable {
 
     String[] ingredients;
     int up;

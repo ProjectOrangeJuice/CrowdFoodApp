@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -22,7 +23,6 @@ import android.widget.TextView;
 
 import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
-import net.thejuggernaut.crowdfood.api.Point;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
 
@@ -82,15 +82,15 @@ public class Scanned extends AppCompatActivity {
     private void setup(){
         mainLayout = (LinearLayout) findViewById(R.id.scanDisplay);
         mainLayout.removeAllViews();
-        setupTitle(p.getProductName(),p.getTrust().get("ProductName"));
+        setupTitle(p.getProductName().getName());
         setupWarnings();
-        setupIngredients(p.getIngredients(), p.getTrust().get("Ingredients"));
-        setupServing(p.getServing(),p.getTrust().get("Serving"));
-        setupNutritional(p.getNutrition(), p.getTrust().get("Nutrition"));
+        setupIngredients(p.getIngredients().getIngredients());
+        setupServing(p.getServing().getServing());
+        setupNutritional(p.getNutrition().getNutrition());
     }
 
 
-    private  void setupServing(final String ra, Point point){
+    private  void setupServing(final String ra){
        LinearLayout servingLayout = new LinearLayout(this);
         servingLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -106,7 +106,7 @@ public class Scanned extends AppCompatActivity {
 
         LinearLayout review = new LinearLayout(this);
         TextView upndown = new TextView(this);
-        upndown.setText("Up: "+point.getConfirm()+" Down:"+point.getDeny());
+
         review.addView(upndown);
         final Button editThis = new Button(this);
         editThis.setText("Edit");
@@ -114,7 +114,7 @@ public class Scanned extends AppCompatActivity {
             public void onClick(View v) {
                 if(rat.isEnabled()) {
                    undoMakeEdit(rat,editThis);
-                    p.setServing(rat.getText().toString());
+                    //p.setServing(rat.getText().toString());
                 }else{
                     makeEdit(rat, editThis);
                 }
@@ -150,7 +150,7 @@ public class Scanned extends AppCompatActivity {
         });
     }
 
-    private void setupTitle(String name, Point point){
+    private void setupTitle(String name ){
          LinearLayout productNameLayout = new LinearLayout(this);
         productNameLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -170,14 +170,14 @@ public class Scanned extends AppCompatActivity {
 
         LinearLayout review = new LinearLayout(this);
         TextView upndown = new TextView(this);
-        upndown.setText("Up: "+point.getConfirm()+" Down:"+point.getDeny());
+        //upndown.setText("Up: "+point.getConfirm()+" Down:"+point.getDeny());
         review.addView(upndown);
         final Button editThis = new Button(this);
         editThis.setText("Edit");
         editThis.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                if(tedit.isEnabled()){
-                   p.setProductName(tedit.getText().toString());
+                  // p.setProductName(tedit.getText().toString());
                    undoMakeEdit(tedit,editThis);
                }else{
                    makeEdit(tedit,editThis);
@@ -215,7 +215,7 @@ public class Scanned extends AppCompatActivity {
     }
 
 
-    private void setupIngredients(String[] ingredients, Point point){
+    private void setupIngredients(String[] ingredients ){
 
         LinearLayout ingredientsLayout = new LinearLayout(this);
         ingredientsLayout.setOrientation(LinearLayout.VERTICAL);
@@ -242,7 +242,7 @@ public class Scanned extends AppCompatActivity {
 
         LinearLayout review = new LinearLayout(this);
         TextView upndown = new TextView(this);
-        upndown.setText("Up: "+point.getConfirm()+" Down:"+point.getDeny());
+        //upndown.setText("Up: "+point.getConfirm()+" Down:"+point.getDeny());
         final Button takePhoto = new Button(this);
         takePhoto.setText("Take photo");
         takePhoto.setVisibility(View.GONE);
@@ -252,7 +252,7 @@ public class Scanned extends AppCompatActivity {
         editThis.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(text.isEnabled()){
-                    p.setProductName(text.getText().toString());
+                   // p.setProductName(text.getText().toString());
                     undoMakeEdit(text,editThis);
                     takePhoto.setVisibility(View.GONE);
                 }else{
@@ -271,7 +271,7 @@ public class Scanned extends AppCompatActivity {
 
 
 
-    private void setupNutritional(final Map<String,Float> nutrition, Point point){
+    private void setupNutritional(final Map<String,Float> nutrition ){
         LinearLayout nutritionLayout = new LinearLayout(this);
         nutritionLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -296,7 +296,7 @@ public class Scanned extends AppCompatActivity {
 
         LinearLayout review = new LinearLayout(this);
         TextView upndown = new TextView(this);
-        upndown.setText("Up: "+point.getConfirm()+" Down:"+point.getDeny());
+        //upndown.setText("Up: "+point.getConfirm()+" Down:"+point.getDeny());
         review.addView(upndown);
         final Button editThis = new Button(this);
         editThis.setText("Edit");
@@ -309,9 +309,9 @@ public class Scanned extends AppCompatActivity {
                       if(!items.get(i).getText().toString().isEmpty() && !values.get(i).getText().toString().isEmpty())
                       tm.put(items.get(i).getText().toString(),Float.valueOf(values.get(i).getText().toString()));
                   }
-                  p.setNutrition(tm);
+                 // p.setNutrition(tm);
 
-                    drawTable(p.getNutrition(),tbl, false);
+                    //drawTable(p.getNutrition(),tbl, false);
                     editThis.setText("Edit");
                 }else{
                     tableInEdit = true;

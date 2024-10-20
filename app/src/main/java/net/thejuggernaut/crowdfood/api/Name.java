@@ -1,8 +1,9 @@
 package net.thejuggernaut.crowdfood.api;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Name {
+public class Name implements Serializable {
     String name;
     int up;
     int down;

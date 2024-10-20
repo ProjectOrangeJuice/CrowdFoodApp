@@ -146,17 +146,17 @@ public class ScanFragment extends Fragment {
         }
         Frame frame = new Frame.Builder().setBitmap(bit).build();
         SparseArray<Barcode> barcodes = detector.detect(frame);
-        try {
-            Barcode thisCode = barcodes.valueAt(0);
-            Log.i("BARCODE", "Value is " + thisCode.rawValue);
-            //scanItem(thisCode.rawValue);
-
-
-
-
-        }catch (Exception e){
-            Log.e("BARCODE",e.getMessage());
-        }
+//        try {
+//            Barcode thisCode = barcodes.valueAt(0);
+//            Log.i("BARCODE", "Value is " + thisCode.rawValue);
+//            //scanItem(thisCode.rawValue);
+//
+//
+//
+//
+//        }catch (Exception e){
+//            Log.e("BARCODE",e.getMessage());
+//        }
         mCamera.release();
         scanItem("000343");
     }
