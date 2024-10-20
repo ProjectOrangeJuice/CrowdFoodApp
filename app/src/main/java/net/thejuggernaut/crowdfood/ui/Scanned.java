@@ -63,7 +63,7 @@ public class Scanned extends AppCompatActivity {
     }
     private void goBackin(){
         if(save){
-            updateProduct();
+            //updateProduct();
         }
         finish();
     }
@@ -128,27 +128,27 @@ public class Scanned extends AppCompatActivity {
 
     }
 
-    private void updateProduct(){
-        FoodieAPI foodieAPI = SetupRetro.getRetro();
-        Call<Product> call = foodieAPI.updateProduct(p.getID(),p);
-        call.enqueue(new Callback<Product>() { @Override
-        public void onResponse(Call<Product> call, Response<Product> response) {
-            if(response.isSuccessful()) {
-                Log.i("UPDATE","WORKED");
-            } else {
-                //not found
-                Log.i("UPDATE",response.message());
-            }
-        }
-
-
-            @Override
-            public void onFailure(Call<Product> call, Throwable t) {
-                t.printStackTrace();
-            }
-
-        });
-    }
+//    private void updateProduct(){
+//        FoodieAPI foodieAPI = SetupRetro.getRetro();
+//        Call<Product> call = foodieAPI.updateProduct(p);
+//        call.enqueue(new Callback<Product>() { @Override
+//        public void onResponse(Call<Product> call, Response<Product> response) {
+//            if(response.isSuccessful()) {
+//                Log.i("UPDATE","WORKED");
+//            } else {
+//                //not found
+//                Log.i("UPDATE",response.message());
+//            }
+//        }
+//
+//
+//            @Override
+//            public void onFailure(Call<Product> call, Throwable t) {
+//                t.printStackTrace();
+//            }
+//
+//        });
+//    }
 
     private void setupTitle(String name ){
          LinearLayout productNameLayout = new LinearLayout(this);

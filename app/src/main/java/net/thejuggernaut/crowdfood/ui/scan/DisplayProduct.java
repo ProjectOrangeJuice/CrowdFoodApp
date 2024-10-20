@@ -3,6 +3,7 @@ package net.thejuggernaut.crowdfood.ui.scan;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +15,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.thejuggernaut.crowdfood.R;
+import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
+import net.thejuggernaut.crowdfood.api.SetupRetro;
 
 import org.w3c.dom.Text;
 
@@ -22,9 +25,15 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class DisplayProduct extends AppCompatActivity {
     private Product p;
     private boolean editMode = false;
+    ArrayList<EditText> items;
+    ArrayList<EditText> values;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +60,9 @@ public class DisplayProduct extends AppCompatActivity {
 
 
     private void editMode(View v){
+        if(editMode){
+            save();
+        }
         editMode = !editMode;
         setupProductName();
         setupIngredients();
@@ -107,8 +119,8 @@ public class DisplayProduct extends AppCompatActivity {
 
     private void setupNutrition() {
 
-        ArrayList<EditText> items = new ArrayList<>();
-        ArrayList<EditText> values = new ArrayList<>();
+        items = new ArrayList<>();
+       values = new ArrayList<>();
 
         TableLayout tbl = (TableLayout) findViewById(R.id.nutritionTable);
         tbl.removeAllViews();
@@ -179,5 +191,42 @@ public class DisplayProduct extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void save(){
+        EditText pne = (EditText) findViewById(R.id.productNameEdit);
+        EditText inge = (EditText) findViewById(R.id.ingredientsEdit);
+        Boolean changed = false;
+        if(pne.getText().toString() != p.getProductName().getName()){
+            changed = true;
+            p.getProductName().setName(pne.getText().toString());
+        }
+
+        if(inge.getText().toString().split(",") != p.getIngredients().getIngredients()){
+            changed = true;
+            p.getIngredients().setIngredients(inge.getText().toString().split(","));
+        }
+
+        if(changed){
+            FoodieAPI foodieAPI = SetupRetro.getRetro();
+            Call<Void> call = foodieAPI.updateProduct(p);
+            call.enqueue(new Callback<Void>() { @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    Log.i("UPDATE","WORKED");
+                } else {
+                    //not found
+                    Log.i("UPDATE",response.message());
+                }
+            }
+
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    t.printStackTrace();
+                }
+
+            });
+        }
     }
 }
