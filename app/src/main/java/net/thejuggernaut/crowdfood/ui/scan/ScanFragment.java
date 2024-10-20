@@ -33,14 +33,7 @@ public class ScanFragment extends Fragment  implements ZBarScannerView.ResultHan
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-//        scanViewModel =
-//                ViewModelProviders.of(this).get(ScanViewModel.class);
-//        View root = inflater.inflate(R.layout.fragment_scan, container, false);
-//
-//        buttonActions(root);
-//
-//
-//        return root;
+
 
         mScannerView = new ZBarScannerView(getActivity());
         return mScannerView;
@@ -58,6 +51,7 @@ public class ScanFragment extends Fragment  implements ZBarScannerView.ResultHan
     public void handleResult(Result rawResult) {
         Toast.makeText(getActivity(), "Contents = " + rawResult.getContents() +
                 ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
+        scanItem(rawResult.getContents());
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.

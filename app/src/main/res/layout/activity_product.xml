@@ -32,7 +32,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:text="PRODUCT NAME"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/productNameEdit"
@@ -89,8 +90,9 @@
                     android:id="@+id/textView6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ingredients"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                    android:text="This product contains.."
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/ingredients"
@@ -99,6 +101,16 @@
                     android:text="TextView"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     tools:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/ingredientsEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/productNameVoteLayout"
@@ -143,21 +155,12 @@
                 android:paddingTop="20dp"
                 android:paddingEnd="20dp">
 
-                <EditText
-                    android:id="@+id/ingredientsEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:inputType="textMultiLine"
-                    android:visibility="gone" />
-
                 <TextView
                     android:id="@+id/textView8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nutrition" />
+                    android:text="Nutrition information"
+                    android:textStyle="bold" />
 
                 <TableLayout
                     android:id="@+id/nutritionTable"
