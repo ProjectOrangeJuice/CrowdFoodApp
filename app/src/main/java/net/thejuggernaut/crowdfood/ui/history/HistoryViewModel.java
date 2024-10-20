@@ -1,4 +1,4 @@
-package net.thejuggernaut.crowdfood.ui.ui.history;
+package net.thejuggernaut.crowdfood.ui.history;
 
 import androidx.lifecycle.ViewModel;
 

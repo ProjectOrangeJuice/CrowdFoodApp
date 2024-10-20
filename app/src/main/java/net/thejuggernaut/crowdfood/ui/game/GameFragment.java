@@ -1,4 +1,4 @@
-package net.thejuggernaut.crowdfood.ui.dashboard;
+package net.thejuggernaut.crowdfood.ui.game;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import net.thejuggernaut.crowdfood.R;
 
-public class DashboardFragment extends Fragment {
+public class GameFragment extends Fragment {
 
-    private DashboardViewModel dashboardViewModel;
+    private GameViewModel gameViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                ViewModelProviders.of(this).get(DashboardViewModel.class);
+        gameViewModel =
+                ViewModelProviders.of(this).get(GameViewModel.class);
         View root = inflater.inflate(R.layout.fragment_game, container, false);
         final TextView textView = root.findViewById(R.id.text_dashboard);
-        dashboardViewModel.getText().observe(this, new Observer<String>() {
+        gameViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

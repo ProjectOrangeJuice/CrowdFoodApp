@@ -4,7 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import net.thejuggernaut.crowdfood.ui.ui.history.HistoryFragment;
+import net.thejuggernaut.crowdfood.R;
+import net.thejuggernaut.crowdfood.ui.history.HistoryFragment;
 
 public class History extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package net.thejuggernaut.crowdfood.ui.home;
+package net.thejuggernaut.crowdfood.ui.account;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import net.thejuggernaut.crowdfood.R;
 
-public class HomeFragment extends Fragment {
+public class AccountFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private AccountViewModel accountViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_scan, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(this, new Observer<String>() {
+        accountViewModel =
+                ViewModelProviders.of(this).get(AccountViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_account, container, false);
+        final TextView textView = root.findViewById(R.id.text_notifications);
+        accountViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

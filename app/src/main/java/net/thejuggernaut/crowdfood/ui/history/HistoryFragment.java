@@ -1,4 +1,4 @@
-package net.thejuggernaut.crowdfood.ui.ui.history;
+package net.thejuggernaut.crowdfood.ui.history;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -12,7 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.thejuggernaut.crowdfood.ui.R;
+import net.thejuggernaut.crowdfood.R;
+
 
 public class HistoryFragment extends Fragment {
 
