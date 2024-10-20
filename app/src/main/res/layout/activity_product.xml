@@ -21,10 +21,11 @@
 
 
             <LinearLayout
+                android:id="@+id/productShape"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@drawable/rounded_red">
+                android:background="@drawable/rounded_red"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/productName"
@@ -79,6 +80,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ingredientShape"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/rounded_red"
@@ -148,6 +150,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/nutritionShape"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/rounded_red"

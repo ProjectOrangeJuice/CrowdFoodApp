@@ -90,6 +90,8 @@ public class DisplayProduct extends AppCompatActivity {
             pn.setVisibility(View.VISIBLE);
             pne.setVisibility(View.GONE);
             pn.setText(p.getProductName().getName());
+            tools.setColour(findViewById(R.id.productShape),p.getProductName().getVotes());
+
             if (p.getProductName().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
                 int[] vo = {1,0,0};
@@ -122,6 +124,7 @@ public class DisplayProduct extends AppCompatActivity {
         if(!editMode) {
             pn.setVisibility(View.VISIBLE);
             pne.setVisibility(View.GONE);
+            tools.setColour(findViewById(R.id.ingredientShape),p.getIngredients().getVotes());
             if (p.getIngredients().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
                 int[] vo = {0,1,0};
@@ -151,6 +154,7 @@ public class DisplayProduct extends AppCompatActivity {
         nutName.setText("Typical values");
         r.addView(nutName);
         if(!editMode) {
+            tools.setColour(findViewById(R.id.nutritionShape),p.getNutrition().getVotes());
             TextView val1 = new TextView(this);
             val1.setText(p.getNutrition().getWeight());
             r.addView(val1);

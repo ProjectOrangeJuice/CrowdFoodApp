@@ -6,11 +6,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
+import net.thejuggernaut.crowdfood.api.Trust;
 import net.thejuggernaut.crowdfood.api.Vote;
 
 import retrofit2.Call;
@@ -44,6 +46,23 @@ public class DisplayFuncs {
         });
     }
 
+
+    public void setColour(LinearLayout l, Trust t){
+        int dif = Math.abs(t.trustDown - t.trustUp);
+        if(dif <= 30){
+            //Set to red. We don't know which
+            l.setBackgroundResource(R.drawable.rounded_red);
+        }else if (t.trustUp >= 80){
+            //set to yellow
+            l.setBackgroundResource(R.drawable.rounded_green);
+        }else if (t.trustUp >= 40){
+            //Set to green
+            l.setBackgroundResource(R.drawable.rounded_yellow);
+        }else{
+            //set to red
+            l.setBackgroundResource(R.drawable.rounded_red);
+        }
+    }
 
 
     private void vote(int name, int ingre, int nut){

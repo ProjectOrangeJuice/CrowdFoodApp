@@ -13,4 +13,12 @@ public class Trust  implements Serializable {
     public int getTrustDown() {
         return trustDown;
     }
+
+    public void setTrustUp(int trustUp) {
+        this.trustUp = trustUp;
+    }
+
+    public void setTrustDown(int trustDown) {
+        this.trustDown = trustDown;
+    }
 }
