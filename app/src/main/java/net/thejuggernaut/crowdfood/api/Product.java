@@ -18,7 +18,9 @@ public class Product implements Serializable {
     Product[] changes;
     String error;
 
-//    public Product(String ID, String productName, String[] ingredients, Map<String, Float> nut, int version,
+
+
+    //    public Product(String ID, String productName, String[] ingredients, Map<String, Float> nut, int version,
 //                   Map<String, Point> trust, String changed, Product[] changes, String error){
 //        this.ID = ID;
 //        this.productName = productName;
@@ -37,6 +39,9 @@ public String getServing() {
         return ID;
     }
 
+    public void setServing(String serving) {
+        this.serving = serving;
+    }
     public void setID(String ID) {
         this.ID = ID;
     }
