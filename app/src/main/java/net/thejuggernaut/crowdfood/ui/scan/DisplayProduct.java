@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -36,6 +38,7 @@ public class DisplayProduct extends AppCompatActivity {
     private boolean editMode = false;
     ArrayList<EditText> items;
     ArrayList<EditText> values;
+    DisplayFuncs tools;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         Intent intent = getIntent();
         p = (Product) intent.getSerializableExtra("PRODUCT");
+        tools = new DisplayFuncs(p);
 
 
         setupProductName();
@@ -78,26 +82,14 @@ public class DisplayProduct extends AppCompatActivity {
             pn.setVisibility(View.VISIBLE);
             pne.setVisibility(View.GONE);
             pn.setText(p.getProductName().getName());
-            if (p.getProductName().getUp() < 5) {
-
-                ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
-                Button up = (Button) findViewById(R.id.productNameUp);
-                up.setText("Up");
-                up.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        vote(1,0,0);
-                    }
-                });
-                Button down = (Button) findViewById(R.id.productNameDown);
-                down.setText("Down");
-                down.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        vote(-1,0,0);
-                    }
-                });
+            if (p.getProductName().isVoteable()) {
+//                int[] vo = {1,0,0};
+//                tools.voteButtons(((ImageButton) findViewById(R.id.productNameUp)),
+//                        ((ImageButton) findViewById(R.id.productNameDown)), vo);
             }
+            int[] vo = {1,0,0};
+            tools.voteButtons(((ImageButton) findViewById(R.id.productNameUp)),
+                    ((ImageButton) findViewById(R.id.productNameDown)), vo);
 
         }else{
            pn.setVisibility(View.GONE);
@@ -117,7 +109,7 @@ public class DisplayProduct extends AppCompatActivity {
         if(!editMode) {
             pn.setVisibility(View.VISIBLE);
             pne.setVisibility(View.GONE);
-            if (p.getIngredients().getUp() < 5) {
+            if (p.getIngredients().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
                 Button up = (Button) findViewById(R.id.ingredientsUp);
                 up.setText("Up");
@@ -223,7 +215,7 @@ public class DisplayProduct extends AppCompatActivity {
         }
 
         if(!editMode) {
-            if (p.getNutrition().getUp() < 5) {
+            if (p.getNutrition().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.VISIBLE);
                 Button up = (Button) findViewById(R.id.nutritionUp);
                 up.setOnClickListener(new View.OnClickListener() {
