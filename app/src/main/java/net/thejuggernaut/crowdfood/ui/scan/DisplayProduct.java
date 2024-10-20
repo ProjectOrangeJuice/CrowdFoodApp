@@ -55,7 +55,7 @@ public class DisplayProduct extends AppCompatActivity {
 
         Intent intent = getIntent();
         p = (Product) intent.getSerializableExtra("PRODUCT");
-        tools = new DisplayFuncs(p);
+        tools = new DisplayFuncs(p,this);
 
 
         setupProductName();
@@ -411,7 +411,7 @@ public class DisplayProduct extends AppCompatActivity {
 
 
         if (changed) {
-            FoodieAPI foodieAPI = SetupRetro.getRetro();
+            FoodieAPI foodieAPI = SetupRetro.getRetro(this);
             Call<Void> call = foodieAPI.updateProduct(p,p.getID());
             call.enqueue(new Callback<Void>() {
                 @Override

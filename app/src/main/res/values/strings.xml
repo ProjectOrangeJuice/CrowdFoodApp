@@ -3,4 +3,8 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="com_auth0_client_id">DiF2l3bgRk7mCqKPQJ1iWvt9kexIHXAB</string>
+    <string name="com_auth0_domain">dev-4x8d9r5y.eu.auth0.com</string>
+
 </resources>

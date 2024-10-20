@@ -76,7 +76,7 @@ public class ScanFragment extends Fragment  implements ZBarScannerView.ResultHan
 
 
     private  void scanItem(String barcode){
-        FoodieAPI foodieAPI = SetupRetro.getRetro();
+        FoodieAPI foodieAPI = SetupRetro.getRetro(getContext());
         Call<Product> call = foodieAPI.loadProduct(barcode);
         call.enqueue(new Callback<Product>() { @Override
         public void onResponse(Call<Product> call, Response<Product> response) {
@@ -132,7 +132,7 @@ public class ScanFragment extends Fragment  implements ZBarScannerView.ResultHan
 
     public void scanItem(final View view){
         String barcode = "000343";
-        FoodieAPI foodieAPI = SetupRetro.getRetro();
+        FoodieAPI foodieAPI = SetupRetro.getRetro(getContext());
         Call<Product> call = foodieAPI.loadProduct(barcode);
         call.enqueue(new Callback<Product>() { @Override
         public void onResponse(Call<Product> call, Response<Product> response) {

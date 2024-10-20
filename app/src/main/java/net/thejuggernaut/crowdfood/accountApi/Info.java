@@ -6,7 +6,7 @@ import java.util.Map;
 public class Info implements Serializable {
 
     Map<String,Float> recommendedNutrition;
-    String  []Allergies;
+    String  []Allergies = new String[0];
 
 
     public Map<String, Float> getRecommendedNutrition() {

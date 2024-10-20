@@ -78,7 +78,7 @@ public class AccountFragment extends Fragment {
         displayValues(v);
     }
     private void getPoints(View v){
-        AccountApi accountAPI = SetupRetro.getRetro();
+        AccountApi accountAPI = SetupRetro.getRetro(getContext());
         Call<Points> call = accountAPI.loadPoints();
         call.enqueue(new Callback<Points>() { @Override
         public void onResponse(Call<Points> call, Response<Points> response) {
@@ -315,7 +315,7 @@ public class AccountFragment extends Fragment {
 
 
         if (changed) {
-            AccountApi accountApi = SetupRetro.getRetro();
+            AccountApi accountApi = SetupRetro.getRetro(getContext());
             Call<Void> call = accountApi.updateAccount(info);
             call.enqueue(new Callback<Void>() {
                 @Override

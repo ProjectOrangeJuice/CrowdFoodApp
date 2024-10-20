@@ -2,6 +2,7 @@ package net.thejuggernaut.crowdfood.ui.scan;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,8 +23,10 @@ import retrofit2.Response;
 public class DisplayFuncs {
 
     Product p;
-    public DisplayFuncs(Product p){
+    Context c;
+    public DisplayFuncs(Product p, Context c){
         this.p = p;
+        this.c = c;
     }
 
     public void voteButtons(ImageButton up, ImageButton down, int[] voteArray){
@@ -68,7 +71,7 @@ public class DisplayFuncs {
     private void vote(int name, int ingre, int nut){
         Vote v = new Vote(p.getID(),name,ingre,nut);
 
-        FoodieAPI foodieAPI = SetupRetro.getRetro();
+        FoodieAPI foodieAPI = SetupRetro.getRetro(c);
         Call<Void> call = foodieAPI.voteForProduct(v,p.getID());
         call.enqueue(new Callback<Void>() { @Override
         public void onResponse(Call<Void> call, Response<Void> response) {
