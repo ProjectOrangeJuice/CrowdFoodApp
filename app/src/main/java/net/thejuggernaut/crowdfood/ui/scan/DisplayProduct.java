@@ -82,7 +82,7 @@ public class DisplayProduct extends AppCompatActivity {
 
                 ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
                 Button up = (Button) findViewById(R.id.productNameUp);
-                up.setText("Up: " + p.getProductName().getUp());
+                up.setText("Up");
                 up.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -90,7 +90,7 @@ public class DisplayProduct extends AppCompatActivity {
                     }
                 });
                 Button down = (Button) findViewById(R.id.productNameDown);
-                down.setText("Down: " + p.getProductName().getDown());
+                down.setText("Down");
                 down.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -120,7 +120,7 @@ public class DisplayProduct extends AppCompatActivity {
             if (p.getIngredients().getUp() < 5) {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
                 Button up = (Button) findViewById(R.id.ingredientsUp);
-                up.setText("Up: " + p.getIngredients().getUp());
+                up.setText("Up");
                 up.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -128,7 +128,7 @@ public class DisplayProduct extends AppCompatActivity {
                     }
                 });
                 Button down = (Button) findViewById(R.id.ingredientsDown);
-                down.setText("Down: " + p.getIngredients().getDown());
+                down.setText("Down");
                 down.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -232,9 +232,9 @@ public class DisplayProduct extends AppCompatActivity {
                         vote(0,0,1);
                     }
                 });
-                up.setText("Up: " + p.getIngredients().getUp());
+                up.setText("Up");
                 Button down = (Button) findViewById(R.id.nutritionDown);
-                down.setText("Down: " + p.getIngredients().getDown());
+                down.setText("Down");
                 down.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
