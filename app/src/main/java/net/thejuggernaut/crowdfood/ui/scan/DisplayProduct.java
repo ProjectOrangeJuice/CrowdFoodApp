@@ -34,6 +34,7 @@ import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
 import net.thejuggernaut.crowdfood.textReader.IngText;
+import net.thejuggernaut.crowdfood.textReader.NText;
 import net.thejuggernaut.crowdfood.textReader.ReaderApi;
 import net.thejuggernaut.crowdfood.textReader.SetupReader;
 import net.thejuggernaut.crowdfood.ui.previous.PreviousIng;
@@ -86,6 +87,7 @@ public class DisplayProduct extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 editMode(v);
+                setupCaptureButtons();
             }
         });
 
@@ -102,16 +104,31 @@ public class DisplayProduct extends AppCompatActivity {
 
     private void setupCaptureButtons() {
         ImageButton btn = (ImageButton) findViewById(R.id.captureIng);
+        ImageButton btn2 = (ImageButton) findViewById(R.id.captureNutrition);
 
         if (editMode) {
+            Log.d("Button","photo buttons are visible");
             btn.setVisibility(View.VISIBLE);
+            btn2.setVisibility(View.VISIBLE);
         } else {
+            Log.d("Button","photo buttons are invisible");
             btn.setVisibility(View.GONE);
+            btn2.setVisibility(View.GONE);
         }
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                whatToCrop = 1;
+                openCrop();
+            }
+
+        });
+
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                whatToCrop = 2;
                 openCrop();
             }
 
@@ -120,6 +137,7 @@ public class DisplayProduct extends AppCompatActivity {
 
     }
 
+    int whatToCrop = 0;
     private void openCrop() {
 
         CropImage.activity()
@@ -129,7 +147,7 @@ public class DisplayProduct extends AppCompatActivity {
 
     }
 
-    private void getText(Bitmap img) {
+    private void getIng(Bitmap img){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         img.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
@@ -163,6 +181,41 @@ public class DisplayProduct extends AppCompatActivity {
         });
     }
 
+    private void getNutrition(Bitmap img){
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        NText in = new NText();
+        in.setNutrition(encoded);
+        ReaderApi readerAPI = SetupReader.getRetro(this);
+        Call<NText> call = readerAPI.getNutritionText(in);
+        call.enqueue(new Callback<NText>() {
+            @Override
+            public void onResponse(Call<NText> call, Response<NText> response) {
+                if (response.isSuccessful()) {
+                    if (response.body().getCorrection().size() > 0) {
+                        p.getNutrition().setNutrition(response.body().getCorrection());
+
+                        setup();
+                    }
+
+                } else {
+                    //not found
+                    Log.i("UPDATE", response.message());
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<NText> call, Throwable t) {
+                t.printStackTrace();
+            }
+
+        });
+    }
+
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -171,7 +224,12 @@ public class DisplayProduct extends AppCompatActivity {
                 Uri resultUri = result.getUri();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-                    getText(bitmap);
+                    if(whatToCrop == 1){
+                        getIng(bitmap);
+                    }else{
+                        getNutrition(bitmap);
+                    }
+                   // getText(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

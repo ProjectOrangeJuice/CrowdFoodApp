@@ -16,5 +16,8 @@ public interface ReaderApi {
     @POST("ingredients")
     Call<IngText> getIngText(@Body IngText product);
 
+    @POST("nutrition")
+    Call<NText> getNutritionText(@Body NText product);
+
 
 }
