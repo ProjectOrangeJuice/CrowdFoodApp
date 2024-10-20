@@ -41,14 +41,14 @@ public class DisplayProduct extends AppCompatActivity {
     ArrayList<EditText> items;
     ArrayList<EditText> values;
     DisplayFuncs tools;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try
-        {
+        try {
             this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
         }
-        catch (NullPointerException e){}
         setContentView(R.layout.activity_product);
 
         Intent intent = getIntent();
@@ -72,8 +72,8 @@ public class DisplayProduct extends AppCompatActivity {
     }
 
 
-    private void editMode(View v){
-        if(editMode){
+    private void editMode(View v) {
+        if (editMode) {
             save();
         }
         editMode = !editMode;
@@ -90,23 +90,23 @@ public class DisplayProduct extends AppCompatActivity {
             pn.setVisibility(View.VISIBLE);
             pne.setVisibility(View.GONE);
             pn.setText(p.getProductName().getName());
-            tools.setColour(findViewById(R.id.productShape),p.getProductName().getVotes());
+            tools.setColour(findViewById(R.id.productShape), p.getProductName().getVotes());
 
             if (p.getProductName().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.VISIBLE);
-                int[] vo = {1,0,0};
+                int[] vo = {1, 0, 0};
                 tools.voteButtons(((ImageButton) findViewById(R.id.productNameUp)),
                         ((ImageButton) findViewById(R.id.productNameDown)), vo);
-            }else{
+            } else {
                 ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.GONE);
             }
 
 
-        }else{
-           pn.setVisibility(View.GONE);
-           pne.setVisibility(View.VISIBLE);
+        } else {
+            pn.setVisibility(View.GONE);
+            pne.setVisibility(View.VISIBLE);
             ((LinearLayout) findViewById(R.id.productNameVoteLayout)).setVisibility(View.GONE);
-           pne.setText(p.getProductName().getName());
+            pne.setText(p.getProductName().getName());
         }
 
     }
@@ -114,53 +114,55 @@ public class DisplayProduct extends AppCompatActivity {
     private void setupIngredients() {
         TextView pn = (TextView) findViewById(R.id.ingredients);
         EditText pne = (EditText) findViewById(R.id.ingredientsEdit);
-        if(p.getIngredients().getIngredients() != null) {
+        if (p.getIngredients().getIngredients() != null) {
             pn.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
             pne.setText(TextUtils.join(",", p.getIngredients().getIngredients()));
-        }else {
+        } else {
             pn.setText("");
             pne.setText("");
         }
-        if(!editMode) {
+        if (!editMode) {
             pn.setVisibility(View.VISIBLE);
             pne.setVisibility(View.GONE);
-            tools.setColour(findViewById(R.id.ingredientShape),p.getIngredients().getVotes());
+            tools.setColour(findViewById(R.id.ingredientShape), p.getIngredients().getVotes());
             if (p.getIngredients().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.VISIBLE);
-                int[] vo = {0,1,0};
+                int[] vo = {0, 1, 0};
                 tools.voteButtons(((ImageButton) findViewById(R.id.ingredientsUp)),
                         ((ImageButton) findViewById(R.id.ingredientsDown)), vo);
-            }else{
+            } else {
                 ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
             }
-        }else{
+        } else {
             ((LinearLayout) findViewById(R.id.ingredientsVoteLayout)).setVisibility(View.GONE);
             pn.setVisibility(View.GONE);
             pne.setVisibility(View.VISIBLE);
         }
     }
+
     EditText recommended;
     EditText weight;
+
     private void setupNutrition() {
 
         items = new ArrayList<>();
-       values = new ArrayList<>();
+        values = new ArrayList<>();
 
         TableLayout tbl = (TableLayout) findViewById(R.id.nutritionTable);
         tbl.removeAllViews();
         //headings
         TableRow r = new TableRow(this);
-        if(p.getNutrition().getWeight() != "" || editMode) {
+        if (p.getNutrition().getWeight() != "" || editMode) {
             TextView nutName = new TextView(this);
             nutName.setText("Weight");
             r.addView(nutName);
         }
-        if(!editMode) {
-            tools.setColour(findViewById(R.id.nutritionShape),p.getNutrition().getVotes());
+        if (!editMode) {
+            tools.setColour(findViewById(R.id.nutritionShape), p.getNutrition().getVotes());
             TextView val1 = new TextView(this);
             val1.setText(p.getNutrition().getWeight());
             r.addView(val1);
-            if(p.getNutrition().getRecommended() != "") {
+            if (p.getNutrition().getRecommended() != "") {
                 TextView rpo = new TextView(this);
                 rpo.setText("Recommended portion");
                 r.addView(rpo);
@@ -168,16 +170,16 @@ public class DisplayProduct extends AppCompatActivity {
             TextView val2 = new TextView(this);
             val2.setText(p.getNutrition().getRecommended());
             r.addView(val2);
-        }else{
+        } else {
             EditText val1 = new EditText(this);
             val1.setText(p.getNutrition().getWeight());
             val1.setHint("100");
             r.addView(val1);
 
 
-                TextView rpo = new TextView(this);
-                rpo.setText("Recommended portion");
-                r.addView(rpo);
+            TextView rpo = new TextView(this);
+            rpo.setText("Recommended portion");
+            r.addView(rpo);
 
 
             EditText val2 = new EditText(this);
@@ -190,29 +192,28 @@ public class DisplayProduct extends AppCompatActivity {
 
 
         tbl.addView(r);
-        if(p.getNutrition().getNutrition() == null){
-            Map<String,float[]> m = new HashMap<>();
+        if (p.getNutrition().getNutrition() == null) {
+            Map<String, float[]> m = new HashMap<>();
             p.getNutrition().setNutrition(m);
         }
         for (Map.Entry<String, float[]> entry : p.getNutrition().getNutrition().entrySet()) {
             TableRow curRow = new TableRow(this);
             EditText ent2 = new EditText(this);
-            if(!editMode) {
+            if (!editMode) {
                 TextView ent = new TextView(this);
                 ent.setText(entry.getKey());
                 curRow.addView(ent);
-            }else{
+            } else {
                 ent2.setText(entry.getKey());
                 curRow.addView(ent2);
                 items.add(ent2);
             }
 
 
-
             EditText val = new EditText(this);
 
 
-            if(!editMode) {
+            if (!editMode) {
                 val.setEnabled(false);
 
             }
@@ -224,7 +225,7 @@ public class DisplayProduct extends AppCompatActivity {
 
             curRow.addView(val);
 
-            TableTextWatch tbc = new TableTextWatch(items,values,curRow,ent2,val,this,tbl);
+            TableTextWatch tbc = new TableTextWatch(items, values, curRow, ent2, val, this, tbl);
             val.addTextChangedListener(tbc);
             ent2.addTextChangedListener(tbc);
 
@@ -234,7 +235,7 @@ public class DisplayProduct extends AppCompatActivity {
         }
 
         //Add our empty row
-        if(editMode){
+        if (editMode) {
             TableRow curRow = new TableRow(this);
             EditText ent = new EditText(this);
             curRow.addView(ent);
@@ -245,29 +246,29 @@ public class DisplayProduct extends AppCompatActivity {
             val.setHint("100");
             curRow.addView(val);
             tbl.addView(curRow);
-            TableTextWatch tbc = new TableTextWatch(items,values,curRow,ent,val,this,tbl);
+            TableTextWatch tbc = new TableTextWatch(items, values, curRow, ent, val, this, tbl);
             val.addTextChangedListener(tbc);
             ent.addTextChangedListener(tbc);
         }
 
-        if(!editMode) {
+        if (!editMode) {
             if (p.getNutrition().isVoteable()) {
                 ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.VISIBLE);
-                int[] vo = {0,0,1};
+                int[] vo = {0, 0, 1};
                 tools.voteButtons(((ImageButton) findViewById(R.id.nutritionUp)),
                         ((ImageButton) findViewById(R.id.nutritionDown)), vo);
-            }else{
+            } else {
                 ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.GONE);
             }
-        }else{
+        } else {
             ((LinearLayout) findViewById(R.id.nutritionVoteLayout)).setVisibility(View.GONE);
         }
 
     }
 
-    private boolean checkTable(Map<String,float[]> newmap){
-        System.out.println("Size.. "+newmap.size());
-        if(newmap.size() != p.getNutrition().getNutrition().size()){
+    private boolean checkTable(Map<String, float[]> newmap) {
+        System.out.println("Size.. " + newmap.size());
+        if (newmap.size() != p.getNutrition().getNutrition().size()) {
             System.out.println("Diff size for table");
             return true;
         }
@@ -292,38 +293,38 @@ public class DisplayProduct extends AppCompatActivity {
             p.getNutrition().getNutrition().remove(entry.getKey());
 
         }
-return false;
+        return false;
     }
 
 
-    private boolean checkIng(String[] ing ){
+    private boolean checkIng(String[] ing) {
         String[] old = p.getIngredients().getIngredients();
-        if(old.length != ing.length){
+        if (old.length != ing.length) {
             System.out.println("Ing diff size");
-            return  true;
+            return true;
         }
-        for(String i : ing){
+        for (String i : ing) {
             boolean found = false;
-            for(String x : old){
-                if(x.equals(i)){
+            for (String x : old) {
+                if (x.equals(i)) {
                     found = true;
                 }
             }
 
-            if(!found){
-                System.out.println("Could not find "+i);
+            if (!found) {
+                System.out.println("Could not find " + i);
                 return true;
             }
         }
-return false;
+        return false;
 
     }
 
-    private void save(){
+    private void save() {
         EditText pne = (EditText) findViewById(R.id.productNameEdit);
         EditText inge = (EditText) findViewById(R.id.ingredientsEdit);
         Boolean changed = false;
-        if(!pne.getText().toString().equals(p.getProductName().getName())){
+        if (!pne.getText().toString().equals(p.getProductName().getName())) {
             System.out.println("Update due to name.");
 
             changed = true;
@@ -331,8 +332,7 @@ return false;
         }
 
 
-
-        if(checkIng(inge.getText().toString().split(","))){
+        if (checkIng(inge.getText().toString().split(","))) {
             System.out.println("Update due to ing.");
             changed = true;
             p.getIngredients().setIngredients(inge.getText().toString().split(","));
@@ -340,47 +340,48 @@ return false;
 
 
         //Get the new map of values
-            Map<String,float[]> n = new HashMap<>();
-            for(int i = 0; i < items.size() -1; i++) {
+        Map<String, float[]> n = new HashMap<>();
+        for (int i = 0; i < items.size() - 1; i++) {
 
-                if (items.get(i).getText().toString().equals("")
-                        && values.get(i).getText().toString().equals("")){
-                    System.out.println("Empty value");
-                } else {
-                    float[] floatvals = {Float.parseFloat(values.get(i).getText().toString()),
-                            0};
+            if (items.get(i).getText().toString().equals("")
+                    && values.get(i).getText().toString().equals("")) {
+                System.out.println("Empty value");
+            } else {
+                float[] floatvals = {Float.parseFloat(values.get(i).getText().toString()),
+                        0};
 
-                    n.put(items.get(i).getText().toString(), floatvals);
-                    System.out.println("Put! "+n.size());
-                }
+                n.put(items.get(i).getText().toString(), floatvals);
+                System.out.println("Put! " + n.size());
             }
+        }
 
-            System.out.println("CHecking.. "+n.size());
-            if(!p.getNutrition().getRecommended().equals(recommended.getText().toString()) ||
-        !p.getNutrition().getWeight().equals(weight.getText().toString())||
-                checkTable(n) ){
+        System.out.println("CHecking.. " + n.size());
+        if (!p.getNutrition().getRecommended().equals(recommended.getText().toString()) ||
+                !p.getNutrition().getWeight().equals(weight.getText().toString()) ||
+                checkTable(n)) {
 
-                changed = true; //need to check to see if nutritional info has changed
-                p.getNutrition().setRecommended(recommended.getText().toString());
-                p.getNutrition().setWeight(weight.getText().toString());
+            changed = true; //need to check to see if nutritional info has changed
+            p.getNutrition().setRecommended(recommended.getText().toString());
+            p.getNutrition().setWeight(weight.getText().toString());
 
-                p.getNutrition().setNutrition(n);
+            p.getNutrition().setNutrition(n);
 
-            }
+        }
 
 
-        if(changed){
+        if (changed) {
             FoodieAPI foodieAPI = SetupRetro.getRetro();
             Call<Void> call = foodieAPI.updateProduct(p);
-            call.enqueue(new Callback<Void>() { @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
-                    Log.i("UPDATE","WORKED");
-                } else {
-                    //not found
-                    Log.i("UPDATE",response.message());
+            call.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Log.i("UPDATE", "WORKED");
+                    } else {
+                        //not found
+                        Log.i("UPDATE", response.message());
+                    }
                 }
-            }
 
 
                 @Override
