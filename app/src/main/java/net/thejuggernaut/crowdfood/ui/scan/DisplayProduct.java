@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -19,19 +17,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import net.thejuggernaut.crowdfood.R;
 import net.thejuggernaut.crowdfood.api.FoodieAPI;
 import net.thejuggernaut.crowdfood.api.Product;
 import net.thejuggernaut.crowdfood.api.SetupRetro;
-import net.thejuggernaut.crowdfood.api.Vote;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,6 +52,12 @@ public class DisplayProduct extends AppCompatActivity {
 
         Intent intent = getIntent();
         p = (Product) intent.getSerializableExtra("PRODUCT");
+
+        //Check nothing for null
+        if (p.getIngredients().getIngredients() == null) {
+            p.getIngredients().setIngredients(new String[0]);
+        }
+
         tools = new DisplayFuncs(p,this);
 
 
@@ -118,11 +121,12 @@ public class DisplayProduct extends AppCompatActivity {
         SharedPreferences pref= getSharedPreferences("AccountInfo",MODE_PRIVATE);
         String allergies = pref.getString("Allergies","");
         String[] allergiesList = allergies.split(",");
+
         ArrayList<String> alerts = new ArrayList<>();
 
         for(String val : p.getIngredients().getIngredients()){
             for(String al : allergiesList){
-                if(val.toLowerCase().equals(al.toLowerCase())){
+                if(val.toLowerCase().equals(al.toLowerCase()) && !val.equals("")){
                     alerts.add("Product contains "+al);
                 }
             }
@@ -179,6 +183,15 @@ public class DisplayProduct extends AppCompatActivity {
     EditText weight;
 
     private void setupNutrition() {
+        SharedPreferences pref = getSharedPreferences("AccountInfo",MODE_PRIVATE);
+        String storedHashMapString = pref.getString("Recommended", "");
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, Float>>(){}.getType();
+        Gson gson = new Gson();
+        Map<String, Float> map = gson.fromJson(storedHashMapString, type);
+        Map<String, Float> nodeMap =
+                new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+        nodeMap.putAll(map);
 
         items = new ArrayList<>();
         values = new ArrayList<>();
@@ -205,6 +218,8 @@ public class DisplayProduct extends AppCompatActivity {
             TextView val2 = new TextView(this);
             val2.setText(p.getNutrition().getRecommended());
             r.addView(val2);
+
+
         } else {
             EditText val1 = new EditText(this);
             val1.setText(p.getNutrition().getWeight());
@@ -238,6 +253,7 @@ public class DisplayProduct extends AppCompatActivity {
                 TextView ent = new TextView(this);
                 ent.setText(entry.getKey());
                 curRow.addView(ent);
+
             } else {
                 ent2.setText(entry.getKey());
                 curRow.addView(ent2);
@@ -246,22 +262,32 @@ public class DisplayProduct extends AppCompatActivity {
 
 
             EditText val = new EditText(this);
-
-
-
-
-
-
             val.setText(String.valueOf(entry.getValue()[0]));
 
 
             curRow.addView(val);
+
+
+
+
+
+
+
             if (!editMode) {
                 val.setEnabled(false);
                 EditText valr = new EditText(this);
                 valr.setText(String.valueOf(entry.getValue()[1]));
                 curRow.addView(valr);
                 valr.setEnabled(false);
+
+                if(nodeMap.containsKey(entry.getKey())){
+                    TextView rda = new TextView(this);
+                    System.out.println(entry.getKey()+" is "+entry.getValue()[1]+"/"+nodeMap.get(entry.getKey()));
+                    float percentage = (entry.getValue()[1] /nodeMap.get(entry.getKey()))*100;
+                    double p = Math.round(percentage*10)/10.0;
+                    rda.setText(p+"%");
+                    curRow.addView(rda);
+                }
 
             }
             values.add(val);

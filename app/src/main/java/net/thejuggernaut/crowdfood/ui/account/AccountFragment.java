@@ -40,6 +40,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.POWER_SERVICE;
 
 public class AccountFragment extends Fragment {
 
@@ -311,6 +312,9 @@ public class AccountFragment extends Fragment {
         if (checkTable(n)) {
             changed = true; //need to check to see if nutritional info has changed
 
+        }
+        if(checkIng(inge.getText().toString().split(","))){
+            changed = true;
         }
 
 
