@@ -7,10 +7,14 @@ public class Ingredients implements Serializable {
 
     String[] ingredients;
     Trust votes;
+    boolean vote;
     int stamp;
     Nutrition[] changes;
 
 
+    public boolean isVote() {
+        return vote;
+    }
 
     public Trust getVotes() {
         return votes;

@@ -7,10 +7,14 @@ public class Name implements Serializable {
     String name;
     Trust votes;
     int stamp;
+    boolean vote;
     Nutrition[] changes;
 
     public String getName() {
         return name;
+    }
+    public boolean isVote() {
+        return vote;
     }
 
     public void setName(String name) {

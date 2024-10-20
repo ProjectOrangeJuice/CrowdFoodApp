@@ -7,12 +7,16 @@ public class Nutrition implements Serializable {
     Map<String,float[]> nutrition;
     Trust votes;
     int stamp;
+    boolean vote;
     String weight;
     String recommended;
     Nutrition[] changes;
 
     public Trust getVotes() {
         return votes;
+    }
+    public boolean isVote() {
+        return vote;
     }
 
     public Map<String, float[]> getNutrition() {
