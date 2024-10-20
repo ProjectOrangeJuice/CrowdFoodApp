@@ -26,10 +26,11 @@
             android:text="Scan" />
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/endGame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="endGame"
             android:text="End" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

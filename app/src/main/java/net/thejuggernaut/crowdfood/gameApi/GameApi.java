@@ -24,10 +24,10 @@ public interface GameApi {
     Call<Question> loadQuestion(@Path("session") String status);
 
     @POST("play")
-    Call<PlayResult> loadProduct(@Body Play play);
+    Call<PlayResult> playQuestion(@Body Play play);
 
     @DELETE("end/{session}")
-    Call<Void> loadProduct(@Path("session") String status);
+    Call<Void> endGame(@Path("session") String status);
 
 
 }

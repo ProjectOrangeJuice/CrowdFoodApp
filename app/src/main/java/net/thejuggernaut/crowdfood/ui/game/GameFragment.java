@@ -40,6 +40,7 @@ public class GameFragment extends Fragment {
         v = root;
 
         setupHistory();
+        setupButtons();
         return root;
     }
 
