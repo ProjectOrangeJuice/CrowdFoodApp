@@ -13,10 +13,10 @@ public interface ReaderApi {
 
 
 
-    @POST("ingredients")
+    @POST("photo/ingredients")
     Call<IngText> getIngText(@Body IngText product);
 
-    @POST("nutrition")
+    @POST("photo/nutrition")
     Call<NText> getNutritionText(@Body NText product);
 
 

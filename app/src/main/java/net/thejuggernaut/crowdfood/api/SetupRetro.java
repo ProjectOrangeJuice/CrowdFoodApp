@@ -22,9 +22,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
+import static net.thejuggernaut.crowdfood.MainActivity.BASE_URL;
 
 public class SetupRetro implements Serializable {
-    public static final String BASE_URL = "http://192.168.1.102:8000";
+
 
     public static FoodieAPI getRetro(Context c){
         Gson gson = new GsonBuilder()

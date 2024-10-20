@@ -42,6 +42,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private Auth0 auth0;
+    public static final String BASE_URL = "http://192.168.1.102:8900";
     private Class<?> mClss;
     private static final int ZBAR_CAMERA_PERMISSION = 1;
     @Override

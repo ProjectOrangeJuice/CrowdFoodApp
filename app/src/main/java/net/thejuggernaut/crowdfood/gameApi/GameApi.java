@@ -14,19 +14,19 @@ public interface GameApi {
 
 
 
-    @GET("session")
+    @GET("game/session")
     Call<Game> getSession();
 
-    @GET("games")
+    @GET("game/games")
     Call<Game[]> getGames();
 
-    @GET("question/{session}")
+    @GET("game/question/{session}")
     Call<Question> loadQuestion(@Path("session") String status);
 
-    @POST("play")
+    @POST("game/play")
     Call<PlayResult> playQuestion(@Body Play play);
 
-    @DELETE("end/{session}")
+    @DELETE("game/end/{session}")
     Call<Void> endGame(@Path("session") String status);
 
 
